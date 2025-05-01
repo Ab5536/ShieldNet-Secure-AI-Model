@@ -6,25 +6,20 @@ users = Blueprint('users', __name__)
 @users.route("/api/signup", methods=["POST"])
 @cross_origin()
 def signup():
-    # Access mongo from current_app (no need for pymongo extension)
     mongo = current_app.mongo
-    
-    # Retrieve form data instead of JSON
+
+    # Get form data
     email = request.form.get("email")
     name = request.form.get("name")
     phone = request.form.get("phoneNumber")
     password = request.form.get("password")
     city = request.form.get("cityName")
     gender = request.form.get("gender")
-    
-    print("Hello", [email, name, phone, password, city, gender])
-    
-    # Check if any required field is missing
+
     if not all([email, name, phone, password, city, gender]):
         return jsonify({"error": "Missing required fields"}), 400
 
-    existing_user = mongo.db.users.find_one({"email": email})
-    if existing_user:
+    if mongo.db.users.find_one({"email": email}):
         return jsonify({"error": "User already exists"}), 409
 
     mongo.db.users.insert_one({
