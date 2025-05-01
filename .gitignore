@@ -56,3 +56,6 @@ logs/
 *.env
 *.local.env
 local.cfg
+
+venv/
+.venv
