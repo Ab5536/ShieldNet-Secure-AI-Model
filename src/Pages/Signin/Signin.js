@@ -5,6 +5,7 @@ import InputField from "./Inputfield/InputField";
 import axios from "axios";
 
 const Signin = () => {
+  const backendURL = process.env.REACT_APP_BACKEND_URI;
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
@@ -24,7 +25,7 @@ const Signin = () => {
   // Sign-in logic and API call
   const SigninRouting = async () => {
     try {
-      const result = await axios.post("http://localhost:5000/api/signin", formData);
+      const result = await axios.post(`${backendURL}/api/signin`, formData);
       if (result.status === 200) {
         console.log("Signin successful");
         

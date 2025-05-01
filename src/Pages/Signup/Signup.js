@@ -5,6 +5,7 @@ import InputField from "../Signin/Inputfield/InputField"; // Importing the Input
 import "./Signup.css";
 
 const Signup = () => {
+  const backendURL = process.env.REACT_APP_BACKEND_URI;
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
@@ -27,7 +28,7 @@ const Signup = () => {
   const signUpRouting = async () => {
     try {
       const result = await axios.post(
-        "http://localhost:5000/api/signup",
+        `${backendURL}/api/signup`,
         formData
       );
       if (result.status === 200) {
