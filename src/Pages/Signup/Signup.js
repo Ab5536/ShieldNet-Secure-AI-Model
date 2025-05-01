@@ -26,10 +26,20 @@ const Signup = () => {
   };
 
   const signUpRouting = async () => {
+    const form = new FormData();
+    for (let key in formData) {
+      form.append(key, formData[key]);
+    }
+  
     try {
       const result = await axios.post(
         `${backendURL}/api/signup`,
-        formData
+        form,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
       if (result.status === 200) {
         navigate("/");
@@ -41,6 +51,7 @@ const Signup = () => {
       setError("An error occurred. Please try again later.");
     }
   };
+  
 
   const submitHandler = (e) => {
     e.preventDefault();
