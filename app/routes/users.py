@@ -1,8 +1,9 @@
 from flask import Blueprint, request, jsonify
-
+from flask_cors import cross_origin
 users = Blueprint('users', __name__)
 
 @users.route("/api/signup", methods=["POST"])
+@cross_origin()
 def signup():
     from app import mongo  # Import mongo inside the function to avoid circular import
     
