@@ -1,0 +1,15 @@
+/* InputField.css */
+.signin-input {
+    width: 100%;
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.signin-input:focus {
+    border-color: #a0c4ff;
+    outline: none;
+}

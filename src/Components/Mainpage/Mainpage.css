@@ -1,0 +1,167 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Open Sans', sans-serif; /* Using a more modern font */
+  }
+  
+  /* Main Section Styling */
+  .main-Mainpage {
+    height: 100vh;
+    background-color: #f0f0f0; /* Lighter background color */
+    display: flex;
+    flex-direction: column; /* Vertical layout */
+    min-height: 100vh; /* Ensure full viewport height */
+  }
+  
+  /* Header Section */
+.header-mainpage {
+    background: white;
+    color: black;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    justify-content: flex-start; /* Align items to the start */
+}
+.logo-container {
+    display: flex;
+    align-items: center;
+    margin-right: 1rem;
+}
+.logo {
+    max-height: 50px;
+    margin-right: 0.5rem; /* Add some space between logo and heading */
+}
+.header-mainpage h1 {
+    margin: 0;
+    margin-right: 350;
+}
+.header-items-mainpage {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    margin-left: 230px
+}
+.header-items-mainpage li {
+    margin-left: 3.5rem;
+    cursor: pointer;
+
+}
+.header-items-mainpage li a {
+    color: black;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+.header-items-mainpage li a:hover {
+    color: black;
+}
+  
+  /* First Section with Background Image */
+
+  .first-section {
+    flex: 1;
+    background-image: url('./images/firstsection.png'); ;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+    padding: 5rem 0;
+    margin-bottom: 100px;
+  }
+  
+  .first-section::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(7, 54, 104, 0.7); /* Adjust opacity as needed */
+    z-index: 1;
+  }
+  
+  .first-text {
+    position: relative;
+    z-index: 2;
+    text-align: center; /* Center text for better balance */
+    max-width: 60%;
+    color: #fff; /* Use white text for better contrast */
+    padding: 2rem; /* Add padding for better spacing */
+    margin-top: 12%;
+  }
+  
+  .subheading {
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin-bottom: 1rem;
+  }
+  
+  .first-text h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+  }
+  
+  .first-text p {
+    font-size: 1.2rem;
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+  }
+  
+  .btn-consult-us {
+    background-color: #007BFF;
+    color: white;
+    padding: 1.2rem 2.5rem;
+    border: 2px solid #007BFF;
+    border-radius: 0.5rem;
+    font-size: 1.2rem;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+  
+  /* Footer Styling */
+  footer {
+    background: #007BFF;
+    color: white;
+    text-align: center;
+    padding: 1em;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+  }
+  
+  /* Chatbox Section (Removed for now) */
+  #chatbox {
+    display: flex;
+    flex-direction: column;
+    margin-top: 2em;
+  }
+  
+  #messages {
+    border: 1px solid #ddd;
+    padding: 10px;
+    height: 150px;
+    overflow-y: auto;
+  }
+  
+  #userInput {
+    padding: 10px;
+    margin-top: 10px;
+  } 
