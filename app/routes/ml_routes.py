@@ -15,6 +15,7 @@ def predict():
     try:
         print("predict tak puhancha hai")
         result = predict_image(file)
+        print("predict tak puhancha hai")
         return jsonify({"prediction": result}), 200
     except ValueError as ve:
         print("predict karne ke doran masla aaya hai")
