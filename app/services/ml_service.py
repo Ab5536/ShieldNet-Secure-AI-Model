@@ -1,6 +1,7 @@
 import torch
 import pickle
 import os
+import numpy as np
 from torchvision import transforms
 from PIL import Image, UnidentifiedImageError
 
@@ -20,29 +21,34 @@ def load_model(path):
 # Load model once when app starts
 model = load_model(model_path)
 
-# Define image transform
-transform = transforms.Compose([
-    transforms.Resize((224, 224)),
-    transforms.ToTensor(),
-    transforms.Normalize([0.5], [0.5])
-])
+# # Define image transform
+# transform = transforms.Compose([
+#     transforms.Resize((224, 224)),
+#     transforms.ToTensor(),
+#     transforms.Normalize([0.5], [0.5])
+# ])
 
 def predict_image(file):
     """Process image and return model prediction."""
     try:
         print("image predict tak puhanchi hai")
         image = Image.open(file).convert('RGB')
-        input_tensor = transform(image).unsqueeze(0)
+        image = image.resize((224, 224))
+        image_array = np.array(image) / 255.0
+        input_tensor = torch.tensor(image_array).permute(2, 0, 1).unsqueeze(0).float()
 
         with torch.no_grad():
-            output = model(input_tensor)
-            if hasattr(output, 'logits'):
-                output = output.logits
-            print("final stage hai")
-            prediction = torch.argmax(output, dim=1).item()
-
-        return 'Active TB' if prediction == 1 else 'Not Active TB'
-
+            outputs = model(input_tensor)
+    
+        # Handle Hugging Face model output
+            if hasattr(outputs, 'logits'):
+                logits = outputs.logits
+                probabilities = torch.softmax(logits, dim=1)
+                tb_prob = probabilities[0][1].item()  # Probability for class 1 (TB)
+                prediction = "TB Detected" if tb_prob > 0.5 else "No TB"
+                print(f"🔍 Prediction: {prediction} (Confidence: {tb_prob:.2%})")
+            else:
+                print("❌ Model output format not recognized")
     except UnidentifiedImageError:
         print("masla hogya")
         raise ValueError("Invalid image file. Please upload a valid image.")
