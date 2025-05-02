@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./ModelML.css";
 
 const ModelML = () => {
+  const backendURL=process.env.REACT_APP_BACKEND_URI;
   const [selectedImage, setSelectedImage] = useState(null);
   const [result, setResult] = useState("");
   const [loading, setLoading] = useState(false);
@@ -17,7 +18,7 @@ const ModelML = () => {
 
       try {
         setLoading(true); 
-        const response = await fetch("http://127.0.0.1:5000/predict", {
+        const response = await fetch(`${backendURL}/api/predict`, {
           method: "POST",
           body: formData,
         });
@@ -30,7 +31,7 @@ const ModelML = () => {
         setResult(data.prediction || "No disease detected."); 
       } 
       catch (error) {
-        setResult(`Error: ${error.message+"Hello its Kamran"}`); 
+        setResult(`Error: ${error.message+"\nHello its Kamran"}`); 
       } finally {
         setLoading(false);
       }
