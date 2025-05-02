@@ -12,7 +12,7 @@ def predict():
         return jsonify({"error": "No image file uploaded."}), 400
 
     file = request.files['image']
-    try:
+    try: 
         print("predict tak puhancha hai")
         result = predict_image(file)
         print("predict tak puhancha hai")
