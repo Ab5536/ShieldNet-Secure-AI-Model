@@ -1,8 +1,10 @@
 from flask import Blueprint, request, jsonify, current_app
 from flask_cors import cross_origin
+from bson import ObjectId
 
 users = Blueprint('users', __name__)
 
+# SIGNUP ROUTE
 @users.route("/api/signup", methods=["POST"])
 @cross_origin()
 def signup():
@@ -22,7 +24,7 @@ def signup():
     if mongo.db.users.find_one({"email": email}):
         return jsonify({"error": "User already exists"}), 409
 
-    mongo.db.users.insert_one({
+    result = mongo.db.users.insert_one({
         "email": email,
         "name": name,
         "phone": phone,
@@ -31,11 +33,18 @@ def signup():
         "gender": gender
     })
 
-    return jsonify({"message": "User created successfully"}), 200
+    # Return user info
+    return jsonify({
+        "message": "User created successfully",
+        "user": {
+            "name": name,
+            "email": email,
+            "user_id": str(result.inserted_id)
+        }
+    }), 200
 
 
-
-#Signin Routes
+# SIGNIN ROUTE
 @users.route("/api/signin", methods=["POST"])
 @cross_origin()
 def signin():
@@ -55,4 +64,11 @@ def signin():
     if user.get("password") != password:
         return jsonify({"error": "Incorrect password"}), 401
 
-    return jsonify({"message": "User signed in successfully", "user_id": str(user["_id"])}), 200
+    return jsonify({
+        "message": "User Signed In",
+        "user": {
+            "name": user["name"],
+            "email": user["email"],
+            "user_id": str(user["_id"])
+        }
+    }), 200
