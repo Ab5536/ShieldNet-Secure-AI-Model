@@ -24,8 +24,16 @@ const Signin = () => {
 
   // Sign-in logic and API call
   const SigninRouting = async () => {
+    const form=new FormData();
+    for(let key in formData){
+      form.append(key,formData[key])
+    }
     try {
-      const result = await axios.post(`${backendURL}/api/signin`, formData);
+      const result = await axios.post(`${backendURL}/api/signin`, form,{
+        headers:{
+          "Content-Type":"multipart/form-data",
+        },
+      });
       if (result.status === 200) {
         console.log("Signin successful");
         
