@@ -22,6 +22,7 @@ develop/
 *.manifest
 machine_learning/model_1_Binary.pkl
 model_1_Binary.pkl/
+model_1_Binary
 *.pkl
 # PyInstaller
 *.spec
