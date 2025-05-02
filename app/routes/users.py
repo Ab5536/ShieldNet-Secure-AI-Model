@@ -32,3 +32,27 @@ def signup():
     })
 
     return jsonify({"message": "User created successfully"}), 200
+
+
+
+#Signin Routes
+@users.route("/api/signin", methods=["POST"])
+@cross_origin()
+def signin():
+    mongo = current_app.mongo
+
+    email = request.form.get("email")
+    password = request.form.get("password")
+
+    if not all([email, password]):
+        return jsonify({"error": "Missing required fields"}), 400
+
+    user = mongo.db.users.find_one({"email": email})
+
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    if user.get("password") != password:
+        return jsonify({"error": "Incorrect password"}), 401
+
+    return jsonify({"message": "User signed in successfully", "user_id": str(user["_id"])}), 200
