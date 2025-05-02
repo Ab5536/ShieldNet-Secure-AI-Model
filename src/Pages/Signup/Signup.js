@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
-import InputField from "../Signin/Inputfield/InputField"; // Importing the InputField component
+import InputField from "../Signin/Inputfield/InputField";
 import "./Signup.css";
 
 const Signup = () => {
   const backendURL = process.env.REACT_APP_BACKEND_URI;
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     name: "",
     password: "",
@@ -15,8 +16,12 @@ const Signup = () => {
     cityName: "",
     gender: "",
   });
+
   const [error, setError] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // State for showing password
+  const [showPassword, setShowPassword] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [emailForOtp, setEmailForOtp] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,25 +38,42 @@ const Signup = () => {
     }
 
     try {
-      const result = await axios.post(
-        `${backendURL}/api/signup`,
-        form,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const result = await axios.post(`${backendURL}/api/signup`, form, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
       if (result.status === 200) {
-        const user = result.data.user; // Assume backend sends user data
-        localStorage.setItem("user", JSON.stringify(user)); // Store in localStorage
-        navigate("/");
+        setEmailForOtp(formData.email);
+        setShowOtpModal(true);
+        setError("");
       } else {
-        setError("Signup Failed");
+        setError("Signup failed. Try again.");
       }
     } catch (error) {
       console.error(error);
       setError("An error occurred. Please try again later.");
+    }
+  };
+
+  const handleOtpVerification = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("email", emailForOtp);
+      formData.append("otp", otp);
+
+      const res = await axios.post(`${backendURL}/api/verify-otp`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      if(res.status==200){
+
+      }
+    } catch (err) {
+      console.error(err);
+      setError("OTP verification failed.");
     }
   };
 
@@ -78,7 +100,7 @@ const Signup = () => {
   };
 
   const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword); // Toggle the password visibility state
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -107,11 +129,11 @@ const Signup = () => {
             value={formData.phoneNumber}
             onChange={handleChange}
           />
-          {/* Password input with Show/Hide feature */}
+
           <div className="password-container">
             <InputField
               name="password"
-              type={showPassword ? "text" : "password"} // Toggle between password and text
+              type={showPassword ? "text" : "password"}
               placeholder="Enter Your Password"
               value={formData.password}
               onChange={handleChange}
@@ -124,6 +146,7 @@ const Signup = () => {
               {showPassword ? "Hide" : "Show"}
             </button>
           </div>
+
           <InputField
             name="cityName"
             type="text"
@@ -131,6 +154,7 @@ const Signup = () => {
             value={formData.cityName}
             onChange={handleChange}
           />
+
           <select
             className="form-select"
             name="gender"
@@ -141,19 +165,43 @@ const Signup = () => {
             <option value="Male">Male</option>
             <option value="Female">Female</option>
           </select>
+
           {error && <p className="error-message">{error}</p>}
+
           <button className="submit-button" type="submit">
             Sign Up
           </button>
         </form>
 
-        {/* Back to Main Menu Button */}
         <div className="back-to-menu-container">
           <Link to="/" className="back-to-menu-button">
             Back to Main Menu
           </Link>
         </div>
       </div>
+
+      {/* OTP Modal */}
+      {showOtpModal && (
+        <div className="otp-modal">
+          <div className="otp-box">
+            <h1>Virtual Disease Detection</h1>
+            <h2>Verify Your Email</h2>
+            <p>An OTP has been sent to {emailForOtp}</p>
+            <input
+              type="number"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              placeholder="Enter OTP"
+            />
+            <button className="submit-button" onClick={handleOtpVerification}>
+              Verify OTP
+            </button>
+            <button className="cancel-button" onClick={() => setShowOtpModal(false)}>
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
