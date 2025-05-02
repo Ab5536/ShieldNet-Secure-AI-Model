@@ -1,0 +1,30 @@
+/* src/Components/Header/Header.css */
+.header-Homepage {
+    background-color: #f7f7f7;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .logo-container {
+    display: inline-block;
+    margin-right: 20px;
+  }
+  
+  .logo {
+    height: 50px;
+  }
+  
+  .header-items-Homepage {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 0;
+  }
+  
+  .header-items-Homepage li {
+    cursor: pointer;
+    font-weight: bold;
+    color: #333;
+  }
+  

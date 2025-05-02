@@ -35,10 +35,11 @@ const Signin = () => {
         },
       });
       if (result.status === 200) {
-        console.log("Signin successful");
-        
+        const user = result.data.user; // Assume backend sends user data
+        localStorage.setItem("user", JSON.stringify(user)); // Store in localStorage
         navigate("/");
-      } else if (result.status === 404) {
+      }
+      else if (result.status === 404) {
         setError("No user found with these credentials");
       } else if (result.status === 500) {
         setError("Server error, please try again later.");

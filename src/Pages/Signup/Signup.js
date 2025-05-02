@@ -42,8 +42,11 @@ const Signup = () => {
         }
       );
       if (result.status === 200) {
+        const user = result.data.user; // Assume backend sends user data
+        localStorage.setItem("user", JSON.stringify(user)); // Store in localStorage
         navigate("/");
-      } else {
+      }
+      else {
         setError("Signup Failed");
       }
     } catch (error) {

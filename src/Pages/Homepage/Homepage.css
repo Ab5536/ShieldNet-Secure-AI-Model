@@ -7,7 +7,7 @@
   }
   
   /* Main Section Styling */
-  .main-Mainpage {
+  .main-Homepage {
     height: 100vh;
     background-color: #f0f0f0; /* Lighter background color */
     display: flex;
@@ -16,7 +16,7 @@
   }
   
   /* Header Section */
-.header-mainpage {
+.header-Homepage {
     background: white;
     color: black;
     padding: 1rem 2rem;
@@ -39,28 +39,28 @@
     max-height: 50px;
     margin-right: 0.5rem; /* Add some space between logo and heading */
 }
-.header-mainpage h1 {
+.header-Homepage h1 {
     margin: 0;
     margin-right: 350;
 }
-.header-items-mainpage {
+.header-items-Homepage {
     display: flex;
     list-style: none;
     margin: 0;
     padding: 0;
     margin-left: 230px
 }
-.header-items-mainpage li {
+.header-items-Homepage li {
     margin-left: 3.5rem;
     cursor: pointer;
 
 }
-.header-items-mainpage li a {
+.header-items-Homepage li a {
     color: black;
     text-decoration: none;
     transition: color 0.3s ease;
 }
-.header-items-mainpage li a:hover {
+.header-items-Homepage li a:hover {
     color: black;
 }
   
@@ -68,7 +68,7 @@
 
   .first-section {
     flex: 1;
-    background-image: url('./images/firstsection.png'); ;
+    background-image: url('../../images/firstsection.png'); 
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
