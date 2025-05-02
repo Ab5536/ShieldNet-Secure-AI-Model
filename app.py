@@ -7,7 +7,7 @@ from torchvision import transforms
 from flask_cors import CORS
 
 # Load the trained ViT model
-model_path = './machine_learning/model_1_Binary_Updated.pkl'
+model_path = './machine_learning/model_1_Binary.pkl'
 
 def load_model(path):
     """Load the model from the specified path and map it to the CPU."""

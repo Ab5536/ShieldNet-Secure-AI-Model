@@ -1,26 +1,26 @@
-import pickle
 import torch
-import numpy as np
-from PIL import Image, UnidentifiedImageError
+import os
 from torchvision import transforms
+from PIL import Image, UnidentifiedImageError
 
-# Load the trained ViT model
-model_path = '../machine_learning/model_1_Binary.pkl'
+model_path = 'app/machine_learning/model_1_Binary.pkl'
 
 def load_model(path):
-    """Load the model from the specified path and map it to the CPU."""
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"Model file not found at {path}")
     try:
-        with open(path, 'rb') as file:
-            model = pickle.load(file)
-        model.to(torch.device('cpu'))
+        # Force all CUDA tensors to be loaded onto CPU
+        model = torch.load(path, map_location=lambda storage, loc: storage.cpu())
         model.eval()
         return model
     except Exception as e:
         raise RuntimeError(f"Failed to load the model: {str(e)}")
 
-# Initialize model 
+
+# Load model once when app starts
 model = load_model(model_path)
-# and transform
+
+# Define image transform
 transform = transforms.Compose([
     transforms.Resize((224, 224)),
     transforms.ToTensor(),
@@ -28,18 +28,15 @@ transform = transforms.Compose([
 ])
 
 def predict_image(file):
-    """Process the uploaded image and return prediction."""
+    """Process image and return model prediction."""
     try:
         image = Image.open(file).convert('RGB')
         input_tensor = transform(image).unsqueeze(0)
 
         with torch.no_grad():
             output = model(input_tensor)
-            if not isinstance(output, torch.Tensor):
-                if hasattr(output, "logits"):
-                    output = output.logits
-                else:
-                    raise TypeError("Model output is not a tensor and does not have 'logits' attribute.")
+            if hasattr(output, 'logits'):
+                output = output.logits
             prediction = torch.argmax(output, dim=1).item()
 
         return 'Active TB' if prediction == 1 else 'Not Active TB'
