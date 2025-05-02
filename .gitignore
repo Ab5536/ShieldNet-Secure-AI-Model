@@ -20,7 +20,9 @@ develop/
 *.egg-info/
 .installed.cfg
 *.manifest
-
+machine_learning/model_1_Binary.pkl
+model_1_Binary.pkl/
+*.pkl
 # PyInstaller
 *.spec
 build/
