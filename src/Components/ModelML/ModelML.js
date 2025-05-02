@@ -2,39 +2,39 @@ import React, { useState } from "react";
 import "./ModelML.css";
 
 const ModelML = () => {
-  const backendURL=process.env.REACT_APP_BACKEND_URI;
+  const backendURL = process.env.REACT_APP_BACKEND_URI || "http://localhost:5000";
   const [selectedImage, setSelectedImage] = useState(null);
   const [result, setResult] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
-    if (file) {
-      setSelectedImage(URL.createObjectURL(file));
-      setResult("Analyzing image...");
+    if (!file) return;
 
-      const formData = new FormData();
-      formData.append("image", file);
+    setSelectedImage(URL.createObjectURL(file));
+    setResult("Analyzing image...");
+    setLoading(true);
 
-      try {
-        setLoading(true); 
-        const response = await fetch(`${backendURL}/api/predict`, {
-          method: "POST",
-          body: formData,
-        });
-          console.log(response)
-        if (!response.ok) {
-          throw new Error("Failed to Model");
-        }
+    const formData = new FormData();
+    formData.append("image", file);
 
-        const data = await response.json();
-        setResult(data.prediction || "No disease detected."); 
-      } 
-      catch (error) {
-        setResult(`Error: ${error.message+"\nHello its Kamran"}`); 
-      } finally {
-        setLoading(false);
+    try {
+      const response = await fetch(`${backendURL}/api/predict`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Prediction failed");
       }
+
+      const data = await response.json();
+      setResult(data.prediction || "No disease detected.");
+    } catch (error) {
+      setResult(`❌ Error: ${error.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -45,10 +45,10 @@ const ModelML = () => {
       <div className="content-container">
         <div className="left-panel">
           <h3>Upload Image</h3>
-          <input 
-            type="file" 
-            accept="image/*" 
-            onChange={handleImageUpload} 
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
             className="file-input"
           />
         </div>
