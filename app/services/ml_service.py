@@ -30,6 +30,7 @@ transform = transforms.Compose([
 def predict_image(file):
     """Process image and return model prediction."""
     try:
+        print("image predict tak puhanchi hai")
         image = Image.open(file).convert('RGB')
         input_tensor = transform(image).unsqueeze(0)
 
@@ -37,9 +38,11 @@ def predict_image(file):
             output = model(input_tensor)
             if hasattr(output, 'logits'):
                 output = output.logits
+            print("final stage hai")
             prediction = torch.argmax(output, dim=1).item()
 
         return 'Active TB' if prediction == 1 else 'Not Active TB'
 
     except UnidentifiedImageError:
+        print("masla hogya")
         raise ValueError("Invalid image file. Please upload a valid image.")
