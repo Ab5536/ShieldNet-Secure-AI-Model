@@ -1,51 +1,63 @@
-// src/Components/Header/Header.js
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-scroll";  // Import Link from react-scroll
 import "./Header.css";
 import logo from "../../images/logo.png";
 
 const Header = () => {
-  const navigate = useNavigate();
-  const [userName, setUserName] = useState(null);
-
-  // Check login status from localStorage
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user?.name) {
-      setUserName(user.name);
-    }
-  }, []);
+  const route = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const handleLogout = () => {
     localStorage.removeItem("user");
-    setUserName(null);
-    navigate("/signin");
+    route("/signin");
   };
 
   return (
     <header className="header-Homepage">
       <div className="logo-container">
-        <img src={logo} alt="Disease Detection System Logo" className="logo" />
+        {/* Clicking on the logo scrolls to the top */}
+        <Link to="first-Section" smooth={true} duration={500}>
+          <img src={logo} alt="Logo" className="logo" />
+        </Link>
+        <h1>
+          <Link to="first-Section" smooth={true} duration={500}>
+            Disease Detection
+          </Link>
+        </h1>
       </div>
-      <h1>Disease Detection</h1>
-      <nav>
-        <ul className="header-items-Homepage">
-          <li><a href="#first-Section">Home</a></li>
-          <li><a href="#model-section">TB Detection</a></li>
-          <li><a href="#Consult">Consultation</a></li>
-          {userName ? (
-            <>
-              <li><strong>{userName}</strong></li>
-              <li onClick={handleLogout}>Logout</li>
-            </>
-          ) : (
-            <>
-              <li onClick={() => navigate("/signin")}>Signin</li>
-              <li onClick={() => navigate("/signup")}>Signup</li>
-            </>
-          )}
+
+      <nav className="nav-center">
+        <ul className="nav-items">
+          <li>
+            {/* Scroll to the top (first section) */}
+            <Link to="first-Section" smooth={true} duration={500}>
+              Home
+            </Link>
+          </li>
+          <li>
+            <a href="#model-section">TB Detection</a>
+          </li>
+          <li>
+            <a href="#Consult">Consultation</a>
+          </li>
         </ul>
       </nav>
+
+      <div className="nav-right">
+        {user ? (
+          <>
+            <span className="username">Hi, {user.name}</span>
+            <button className="logout-button" onClick={handleLogout}>
+              Logout
+            </button>
+          </>
+        ) : (
+          <button className="logout-button" onClick={() => route("/signin")}>
+            Signin
+          </button>
+        )}
+      </div>
     </header>
   );
 };

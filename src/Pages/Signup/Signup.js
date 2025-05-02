@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import InputField from "../Signin/Inputfield/InputField"; // Importing the InputField component
 import "./Signup.css";
@@ -16,6 +16,7 @@ const Signup = () => {
     gender: "",
   });
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // State for showing password
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,7 +31,7 @@ const Signup = () => {
     for (let key in formData) {
       form.append(key, formData[key]);
     }
-  
+
     try {
       const result = await axios.post(
         `${backendURL}/api/signup`,
@@ -45,8 +46,7 @@ const Signup = () => {
         const user = result.data.user; // Assume backend sends user data
         localStorage.setItem("user", JSON.stringify(user)); // Store in localStorage
         navigate("/");
-      }
-      else {
+      } else {
         setError("Signup Failed");
       }
     } catch (error) {
@@ -54,7 +54,6 @@ const Signup = () => {
       setError("An error occurred. Please try again later.");
     }
   };
-  
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -76,6 +75,10 @@ const Signup = () => {
       gender &&
       gender !== "Gender"
     );
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword); // Toggle the password visibility state
   };
 
   return (
@@ -104,13 +107,23 @@ const Signup = () => {
             value={formData.phoneNumber}
             onChange={handleChange}
           />
-          <InputField
-            name="password"
-            type="password"
-            placeholder="Enter Your Password"
-            value={formData.password}
-            onChange={handleChange}
-          />
+          {/* Password input with Show/Hide feature */}
+          <div className="password-container">
+            <InputField
+              name="password"
+              type={showPassword ? "text" : "password"} // Toggle between password and text
+              placeholder="Enter Your Password"
+              value={formData.password}
+              onChange={handleChange}
+            />
+            <button
+              type="button"
+              className="show-password-btn"
+              onClick={togglePasswordVisibility}
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
+          </div>
           <InputField
             name="cityName"
             type="text"
@@ -133,6 +146,13 @@ const Signup = () => {
             Sign Up
           </button>
         </form>
+
+        {/* Back to Main Menu Button */}
+        <div className="back-to-menu-container">
+          <Link to="/" className="back-to-menu-button">
+            Back to Main Menu
+          </Link>
+        </div>
       </div>
     </div>
   );

@@ -7,6 +7,7 @@ import axios from "axios";
 const Signin = () => {
   const backendURL = process.env.REACT_APP_BACKEND_URI;
   const navigate = useNavigate();
+  const [showToast, setShowToast] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -24,21 +25,25 @@ const Signin = () => {
 
   // Sign-in logic and API call
   const SigninRouting = async () => {
-    const form=new FormData();
-    for(let key in formData){
-      form.append(key,formData[key])
+    const form = new FormData();
+    for (let key in formData) {
+      form.append(key, formData[key])
     }
     try {
-      const result = await axios.post(`${backendURL}/api/signin`, form,{
-        headers:{
-          "Content-Type":"multipart/form-data",
+      const result = await axios.post(`${backendURL}/api/signin`, form, {
+        headers: {
+          "Content-Type": "multipart/form-data",
         },
       });
       if (result.status === 200) {
-        const user = result.data.user; // Assume backend sends user data
-        localStorage.setItem("user", JSON.stringify(user)); // Store in localStorage
-        navigate("/");
+        const user = result.data.user;
+        localStorage.setItem("user", JSON.stringify(user));
+        setShowToast(true); // Show toast
+        setTimeout(() => {
+          navigate("/");
+        }, 1500); // Navigate after showing toast
       }
+
       else if (result.status === 404) {
         setError("No user found with these credentials");
       } else if (result.status === 500) {
@@ -60,8 +65,14 @@ const Signin = () => {
     }
   };
 
+
   return (
     <div className="signin-container">
+      {showToast && (
+        <div className="toast-notification">
+          ✅ User signed in successfully!
+        </div>
+      )}
       <div className="signin-card">
         <h1 className="signin-title">Virtual Disease Detection</h1>
         <h2 className="signin-subtitle"></h2>
@@ -85,9 +96,14 @@ const Signin = () => {
             Sign In
           </button>
         </form>
+
         <p className="signup-link">
           Don't have an account? <a href="/signup">Sign up</a>
         </p>
+        <p className="back-link" onClick={() => navigate(-1)}>
+          ← Back to Previous Page
+        </p>
+
       </div>
     </div>
   );

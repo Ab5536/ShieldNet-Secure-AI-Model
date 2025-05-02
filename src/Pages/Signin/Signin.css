@@ -1,120 +1,170 @@
-/* Basic Reset */
+/* Reset */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: 'Poppins', sans-serif;
-}
-
-/* Background */
-.signin-container {
+  }
+  
+  /* Container */
+  .signin-container {
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
     min-height: 100vh;
-    background: linear-gradient(135deg, #564b61, #748ebb);
+    background: url('https://images.unsplash.com/photo-1521791055366-0d553872125f?auto=format&fit=crop&w=1950&q=80') no-repeat center center/cover;
     padding: 20px;
-}
-
-/* Card */
-.signin-card {
-    background: #fff;
-    border-radius: 12px;
-    padding: 40px 30px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    max-width: 400px;
+  }
+  
+  /* Card */
+  .signin-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    padding: 50px 40px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    max-width: 420px;
     width: 100%;
     text-align: center;
     animation: fadeIn 0.5s ease-in-out;
-}
-
-/* Title & Subtitle */
-.signin-title {
-    font-size: 2rem;
+  }
+  
+  /* Title */
+  .signin-title {
+    font-size: 2.2rem;
     font-weight: bold;
-    color: #333;
+    color: #2c3e50;
     margin-bottom: 10px;
-}
-
-.signin-subtitle {
+  }
+  
+  .signin-subtitle {
     font-size: 1rem;
-    color: #666;
-    margin-bottom: 20px;
-}
-
-/* Form */
-.signin-form {
+    color: #7f8c8d;
+    margin-bottom: 25px;
+  }
+  
+  /* Form */
+  .signin-form {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-}
-
-/* Input Fields */
-input {
+    gap: 18px;
+  }
+  
+  /* Input Fields */
+  input {
     width: 100%;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    padding: 14px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
     font-size: 1rem;
-    transition: border-color 0.3s ease;
-}
-
-input:focus {
-    border-color: #2575fc;
+    transition: 0.3s;
+  }
+  
+  input:focus {
+    border-color: #3498db;
     outline: none;
-}
-
-/* Submit Button */
-.submit-button {
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.4);
+  }
+  
+  /* Button */
+  .submit-button {
     width: 100%;
     padding: 15px;
     font-size: 1rem;
-    font-weight: bold;
+    font-weight: 600;
     color: #fff;
-    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    background: linear-gradient(to right, #3498db, #8e44ad);
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
-    transition: background 0.3s ease;
-}
-
-.submit-button:hover {
-    background: linear-gradient(135deg, #2575fc, #6a11cb);
-}
-
-/* Error Message */
-.error-message {
-    color: #d9534f;
+    transition: 0.3s ease;
+  }
+  
+  .submit-button:hover {
+    background: linear-gradient(to right, #8e44ad, #3498db);
+  }
+  
+  /* Error */
+  .error-message {
+    color: #e74c3c;
     font-size: 0.9rem;
-    margin-top: -15px;
-}
-
-/* Signup Link */
-.signup-link {
+    margin-top: -10px;
+  }
+  
+  /* Links */
+  .signup-link {
     font-size: 0.9rem;
-    color: #666;
-    margin-top: 20px;
-}
-
-.signup-link a {
-    color: #2575fc;
+    color: #7f8c8d;
+    margin-top: 25px;
+  }
+  
+  .signup-link a {
+    color: #3498db;
+    font-weight: 600;
     text-decoration: none;
-    font-weight: bold;
     transition: color 0.3s ease;
-}
-
-.signup-link a:hover {
-    color: #6a11cb;
-}
-
-/* Animations */
-@keyframes fadeIn {
+  }
+  
+  .signup-link a:hover {
+    color: #8e44ad;
+  }
+  
+  .back-link {
+    font-size: 0.9rem;
+    color: #34495e;
+    cursor: pointer;
+    margin-top: 10px;
+    text-decoration: underline;
+  }
+  
+  /* Toast */
+  .toast-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #2ecc71;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    animation: slideIn 0.3s ease forwards;
+  }
+  
+  /* Animations */
+  @keyframes fadeIn {
     from {
-        opacity: 0;
-        transform: translateY(-20px);
+      opacity: 0;
+      transform: translateY(-20px);
     }
     to {
-        opacity: 1;
-        transform: translateY(0);
+      opacity: 1;
+      transform: translateY(0);
     }
-}
+  }
+  
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Responsive */
+  @media (max-width: 480px) {
+    .signin-card {
+      padding: 30px 20px;
+    }
+  
+    .signin-title {
+      font-size: 1.8rem;
+    }
+  
+    input, .submit-button {
+      padding: 12px;
+    }
+  }
+  
