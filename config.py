@@ -1,9 +1,13 @@
 from dotenv import load_dotenv
 import os
 
-# Load environment variables from the .env file in the current directory
-load_dotenv()
+load_dotenv()  # Load .env into environment variables
 
-#class Config:
-    #MONGO_URI = "mongodb+srv://myuse:okay@cluster0.amzpn.mongodb.net/Virtual-Disease-Detection"  # Fetch the MONGO_URI from the environment variable
-    #print(f"Loaded Mongo URI: {MONGO_URI}")  # Debug line
+class Config:
+    MONGO_URI = os.getenv("MONGO_URI")
+    MAIL_SERVER = 'smtp.gmail.com'
+    MAIL_PORT = 587
+    MAIL_USE_TLS = True
+    MAIL_USERNAME = os.getenv("MAIL_USERNAME")
+    MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
+    MAIL_DEFAULT_SENDER = os.getenv("MAIL_DEFAULT_SENDER")
