@@ -1,9 +1,9 @@
 from flask import Blueprint, request, jsonify
 from app.services.ml_service import predict_image
 
-ml_bp = Blueprint('ml', __name__)
+ml_bp = Blueprint('ml_routes', __name__)
 
-@ml_bp.route('/predict', methods=['POST'])
+@ml_bp.route('/api/predict', methods=['POST'])
 def predict():
     if 'image' not in request.files:
         return jsonify({"error": "No image file uploaded."}), 400

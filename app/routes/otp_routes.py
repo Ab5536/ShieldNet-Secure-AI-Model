@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from app.services.otp_service import generate_otp, send_otp_email, verify_otp
 
-otp_bp = Blueprint('otp', __name__)
+otp_bp = Blueprint('otp_routes', __name__)
 
 @otp_bp.route('/send-otp', methods=['POST'])
 def send_otp_route():
