@@ -8,18 +8,21 @@ ml_bp = Blueprint('ml_routes', __name__)
 @cross_origin()
 def predict():
     if 'image' not in request.files:
-        print("Image not found")
+        print("❌ Image not found in request")
         return jsonify({"error": "No image file uploaded."}), 400
 
     file = request.files['image']
-    try: 
-        print("predict tak puhancha hai")
+    try:
+        print("📩 Image received, starting prediction...")
         result = predict_image(file)
-        print("predict tak puhancha hai")
+        print("✅ Prediction complete")
+        print(f"🔍 Prediction result: {result}")
         return jsonify({"prediction": result}), 200
+
     except ValueError as ve:
-        print("predict karne ke doran masla aaya hai")
+        print("⚠️ ValueError during prediction")
         return jsonify({"error": str(ve)}), 400
+
     except Exception as e:
-        print("processing nhi howi bhai")
+        print(f"❌ Unexpected error during processing: {str(e)}")
         return jsonify({"error": f"Error processing image: {str(e)}"}), 500

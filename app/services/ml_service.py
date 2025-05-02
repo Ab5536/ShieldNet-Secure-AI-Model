@@ -14,6 +14,7 @@ def load_model(path):
             model = pickle.load(f)
         print("✅ Model loaded successfully!")
         print(f"Model type: {type(model)}")
+        return model
     except Exception as e:
         print(f"❌ Failed to load model: {e}")
     
@@ -31,7 +32,7 @@ model = load_model(model_path)
 def predict_image(file):
     """Process image and return model prediction."""
     try:
-        print("image predict tak puhanchi hai")
+        
         image = Image.open(file).convert('RGB')
         image = image.resize((224, 224))
         image_array = np.array(image) / 255.0
@@ -39,16 +40,22 @@ def predict_image(file):
 
         with torch.no_grad():
             outputs = model(input_tensor)
-    
-        # Handle Hugging Face model output
+
             if hasattr(outputs, 'logits'):
                 logits = outputs.logits
                 probabilities = torch.softmax(logits, dim=1)
-                tb_prob = probabilities[0][1].item()  # Probability for class 1 (TB)
+                tb_prob = probabilities[0][1].item()
                 prediction = "TB Detected" if tb_prob > 0.5 else "No TB"
-                print(f"🔍 Prediction: {prediction} (Confidence: {tb_prob:.2%})")
+                print("✅ Prediction successful")
+                return f"Prediction: {prediction} (Confidence: {tb_prob:.2%})"
             else:
                 print("❌ Model output format not recognized")
+                return "Model output format not recognized."
+
     except UnidentifiedImageError:
-        print("masla hogya")
+        print("❌ Invalid image file")
         raise ValueError("Invalid image file. Please upload a valid image.")
+
+    except Exception as e:
+        print(f"❌ Unexpected error: {e}")
+        return f"Unexpected error occurred: {str(e)}"
