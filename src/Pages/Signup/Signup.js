@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import InputField from "../Signin/Inputfield/InputField";
+import { FiEye, FiEyeOff } from "react-icons/fi";  // Eye icon import
 import "./Signup.css";
 
 const Signup = () => {
@@ -13,14 +14,13 @@ const Signup = () => {
     password: "",
     email: "",
     gender: "",
-    code: ""
+    otp: ""
   });
 
   const [fieldErrors, setFieldErrors] = useState({});
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [otp, setOtp] = useState("");
-  const [showOtpModal, setShowOtpModal] = useState(false);
   const [emailForOtp, setEmailForOtp] = useState("");
 
   const handleChange = (e) => {
@@ -31,37 +31,34 @@ const Signup = () => {
     }));
     setFieldErrors((prevErrors) => ({
       ...prevErrors,
-      [name]: "", // Clear error on change
+      [name]: "",
     }));
   };
 
-  const sendCode = async () => {
+  const sendotp = async () => {
     try {
       const form = new FormData();
       for (let key in formData) {
         form.append(key, formData[key]);
       }
-      if (validateForm) {
-        const result = await axios.post(`${backendURL}/api/send-code`,
-          { form },
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            }
-          },);
+      if (validateForm()) {
+        const result = await axios.post(`${backendURL}/api/send-otp`, form, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
         if (result.status === 200) {
           setError("");
-          alert("Code Sent successfully to " + formData.email);
-        }
-        else if (result.status === 304) {
-          alert("Previous Code not Expired Yet");
-        }
-        else {
-          setError("Failed to send code.");
+          alert("otp sent successfully to " + formData.email);
+        } else if (result.status === 304) {
+          alert("Previous otp not expired yet.");
+        } else {
+          alert("Failed to send otp.");
         }
       }
     } catch (error) {
-      setError("An error occurred While sending Code.");
+      alert("An error occurred while sending the otp.");
     }
   };
 
@@ -78,51 +75,32 @@ const Signup = () => {
         },
       });
 
-      if (result.status === 200) {
+      if (result.status === 201) {
         setError("");
         const user = result.data.user;
         localStorage.setItem("user", JSON.stringify(user));
+        alert("Signup successful!");
         navigate('/');
-      } else if (result.status === 20) {
-        alert("Resend OTP");
-      }
-      else if (result.status === 0) {
-        alert("Invalid OTP");
-      }
-      else {
-        setError("Signup failed. Try again.");
+      } else if (result.status === 410) {
+        alert("OTP has expired. Please request a new one.");
+      } else if (result.status === 401) {
+        alert("Invalid OTP. Please try again.");
+      } else if (result.status === 404) {
+        alert("No verification found for this email. Please sign up first.");
+      } else if (result.status === 400) {
+        alert("Bad request. Please check the entered values.");
+      } else {
+        alert("Signup failed. Try again.");
       }
     }
     catch (error) {
       console.error(error);
-      setError("An error occurred. Please try again later.");
-    }
-  };
-
-  const handleOtpVerification = async () => {
-    try {
-      const formData = new FormData();
-      formData.append("email", emailForOtp);
-      formData.append("otp", otp);
-
-      const res = await axios.post(`${backendURL}/api/verify-otp`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      if (res.status === 200 && res.data.user) {
-        const user = res.data.user;
-        localStorage.setItem("user", JSON.stringify(user));
-        navigate('/');
-      }
-    } catch (err) {
-      console.error(err);
-      setError("OTP verification failed.");
+      alert("An error occurred. Please try again later.");
     }
   };
 
   const validateForm = () => {
-    const { email, code, name, password, gender } = formData;
+    const { email, otp, name, password, gender } = formData;
     const errors = {};
 
     if (!email) errors.email = "Email is required.";
@@ -136,11 +114,11 @@ const Signup = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    const { code } = formData;
+    const { otp } = formData;
 
     if (validateForm()) {
-      if (!code) {
-        setFieldErrors({ code: "Code is missing." });
+      if (!otp) {
+        setFieldErrors({ otp: "otp is missing." });
         return;
       }
       signUpRouting();
@@ -166,6 +144,24 @@ const Signup = () => {
             onChange={handleChange}
           />
           {fieldErrors.email && <p className="error-message">{fieldErrors.email}</p>}
+          <div className="password-container">
+            <InputField
+              name="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter Your Password"
+              value={formData.password}
+              onChange={handleChange}
+              autoComplete="new-password" // To suggest a new password from the browser
+            />
+            <button
+              type="button"
+              className="show-password-btn"
+              onClick={togglePasswordVisibility}
+            >
+              {showPassword ? <FiEyeOff /> : <FiEye />} {/* Eye Icon */}
+            </button>
+          </div>
+          {fieldErrors.password && <p className="error-message">{fieldErrors.password}</p>}
 
           <InputField
             name="name"
@@ -176,23 +172,6 @@ const Signup = () => {
           />
           {fieldErrors.name && <p className="error-message">{fieldErrors.name}</p>}
 
-          <div className="password-container">
-            <InputField
-              name="password"
-              type={showPassword ? "text" : "password"}
-              placeholder="Enter Your Password"
-              value={formData.password}
-              onChange={handleChange}
-            />
-            <button
-              type="button"
-              className="show-password-btn"
-              onClick={togglePasswordVisibility}
-            >
-              {showPassword ? "Hide" : "Show"}
-            </button>
-          </div>
-          {fieldErrors.password && <p className="error-message">{fieldErrors.password}</p>}
 
           <select
             className="form-select"
@@ -206,24 +185,24 @@ const Signup = () => {
           </select>
           {fieldErrors.gender && <p className="error-message">{fieldErrors.gender}</p>}
 
-          <div className="send-code-container">
+          <div className="send-otp-container">
             <input
               type="number"
-              name="code"
-              value={formData.code}
+              name="otp"
+              value={formData.otp}
               onChange={handleChange}
-              placeholder="Enter Code"
-              className="code-input"
+              placeholder="Enter otp"
+              className="otp-input"
             />
             <button
               type="button"
-              onClick={sendCode}
-              className="send-code-btn"
+              onClick={sendotp}
+              className="send-otp-btn"
             >
-              Send Code
+              Send otp
             </button>
           </div>
-          {fieldErrors.code && <p className="error-message">{fieldErrors.code}</p>}
+          {fieldErrors.otp && <p className="error-message">{fieldErrors.otp}</p>}
 
           {error && <p className="error-message">{error}</p>}
 
@@ -238,28 +217,6 @@ const Signup = () => {
           </Link>
         </div>
       </div>
-
-      {showOtpModal && (
-        <div className="otp-modal">
-          <div className="otp-box">
-            <h1>Virtual Disease Detection</h1>
-            <h2>Verify Your Email</h2>
-            <p>An OTP has been sent to {emailForOtp}</p>
-            <input
-              type="number"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-              placeholder="Enter OTP"
-            />
-            <button className="submit-button" onClick={handleOtpVerification}>
-              Verify OTP
-            </button>
-            <button className="cancel-button" onClick={() => setShowOtpModal(false)}>
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
