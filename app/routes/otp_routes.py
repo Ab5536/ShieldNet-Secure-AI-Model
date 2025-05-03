@@ -19,12 +19,15 @@ def send_otp_route():
 def verify_otp_route():
     email = request.form.get("email")
     otp = request.form.get("otp")
+
     if not email or not otp:
         return jsonify({"error": "Email and OTP are required"}), 400
 
     result = verify_otp(email, otp)
     if result["success"]:
-        # Optionally move user to `users` collection here
-        return jsonify({"message": result["message"]}), 200
+        return jsonify({
+            "message": result["message"],
+            "user": result["user"]
+        }), 200
     else:
         return jsonify({"error": result["message"]}), 400

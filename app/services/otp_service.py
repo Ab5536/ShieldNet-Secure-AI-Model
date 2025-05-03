@@ -31,31 +31,32 @@ def send_otp_email(email, otp):
 def verify_otp(email, otp):
     mongo = current_app.mongo
 
-    # Find the pending user
     pending_user = mongo.db.pending_users.find_one({"email": email})
     
     if not pending_user:
         return {"success": False, "message": "No pending verification for this email"}
 
-    # Check if OTP is expired
     if datetime.now() > pending_user.get("otp_expires_at"):
         mongo.db.pending_users.delete_one({"email": email})
         return {"success": False, "message": "OTP has expired. Please sign up again."}
 
-    # Check if OTP matches
     if pending_user.get("otp") == int(otp):
-        # Remove fields we don't want to store in the final users collection
         user_data = pending_user.copy()
         user_data.pop("_id", None)
         user_data.pop("otp", None)
         user_data.pop("otp_expires_at", None)
 
-        # Insert into main users collection
         mongo.db.users.insert_one(user_data)
-
-        # Remove from pending_users
         mongo.db.pending_users.delete_one({"email": email})
 
-        return {"success": True, "message": "OTP verified. User registration completed."}
+        # ✅ Return the user data so the frontend can store it
+        return {
+            "success": True,
+            "message": "OTP verified. User registration completed.",
+            "user": {
+                "name": user_data.get("name"),
+                "email": user_data.get("email")
+            }
+        }
     else:
         return {"success": False, "message": "Invalid OTP"}
