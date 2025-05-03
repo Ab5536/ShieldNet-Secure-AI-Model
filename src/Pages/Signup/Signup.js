@@ -72,7 +72,7 @@ const Signup = () => {
       if (res.status === 200 && res.data.user) {
         const user = res.data.user;
         localStorage.setItem("user", JSON.stringify(user));
-        navigate('/');
+        navigate('/'); 
       }
     } catch (err) {
       console.error(err);
