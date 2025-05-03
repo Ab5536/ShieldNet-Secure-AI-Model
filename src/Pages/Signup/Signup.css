@@ -166,6 +166,52 @@
   .cancel-button {
     background-color: #aaa;
   }
+  .send-code-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Match input style */
+.code-input {
+    flex: 1;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease;
+}
+
+.code-input:focus {
+    border-color: #2575fc;
+    outline: none;
+    background-color: #fff;
+}
+
+/* Match submit-button style */
+.send-code-btn {
+    padding: 15px 20px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #fff;
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.send-code-btn:hover {
+    background: linear-gradient(135deg, #2575fc, #6a11cb);
+}
+.error-message {
+    color: red;
+    font-size: 0.875rem; /* Slightly smaller than normal text */
+    margin-top: 4px;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
   
 /* Animations */
 @keyframes fadeIn {
