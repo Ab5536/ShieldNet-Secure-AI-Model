@@ -1,6 +1,5 @@
 from flask import Blueprint, request, jsonify, current_app
 from flask_cors import cross_origin
-
 from bson import ObjectId
 from app.services.otp_service import generate_otp, send_otp_email
 
@@ -11,6 +10,7 @@ users = Blueprint('user_routes', __name__)
 @cross_origin()
 def signup():
     mongo = current_app.mongo
+
     # Get form data
     email = request.form.get("email")
     name = request.form.get("name")
@@ -25,10 +25,11 @@ def signup():
     if mongo.db.users.find_one({"email": email}) or mongo.db.pending_users.find_one({"email": email}):
         return jsonify({"error": "User already exists or pending verification"}), 409
 
-    otp = generate_otp(email)
-    print("in User Route: " + str(otp))
+    otp, expires_at = generate_otp()
+    print("Generated OTP:", otp)
+
     if send_otp_email(email, otp):
-        # Store user data and OTP in pending_users collection
+        # Store user data and OTP with expiration time in pending_users
         mongo.db.pending_users.insert_one({
             "email": email,
             "name": name,
@@ -36,7 +37,8 @@ def signup():
             "password": password,
             "city": city,
             "gender": gender,
-            "otp": otp
+            "otp": otp,
+            "otp_expires_at": expires_at
         })
         return jsonify({"message": "OTP sent to email. Please verify to complete registration."}), 200
     else:

@@ -15,14 +15,16 @@ def send_otp_route():
     else:
         return jsonify({"error": "Error sending OTP"}), 500
 
-@otp_bp.route('/verify-otp', methods=['POST'])
+@otp_bp.route('/api/verify-otp', methods=['POST'])
 def verify_otp_route():
-    user_email = request.form.get('email')
-    user_otp = request.form.get('otp')
-    if not user_email or not user_otp:
+    email = request.form.get("email")
+    otp = request.form.get("otp")
+    if not email or not otp:
         return jsonify({"error": "Email and OTP are required"}), 400
-    
-    if verify_otp(user_email, user_otp):  # Verify OTP against stored one
-        return jsonify({"message": "OTP verified successfully"}), 200
+
+    result = verify_otp(email, otp)
+    if result["success"]:
+        # Optionally move user to `users` collection here
+        return jsonify({"message": result["message"]}), 200
     else:
-        return jsonify({"error": "Invalid OTP"}), 400
+        return jsonify({"error": result["message"]}), 400

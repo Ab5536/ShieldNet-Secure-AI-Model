@@ -5,14 +5,14 @@ from datetime import datetime, timedelta
 from flask_mail import Mail, Message
 from flask import current_app
 
+
 otp_storage = {}  # Store OTP data temporarily (you can replace this with a database)
 
 # Generate OTP and store it with expiration time
-def generate_otp(email):
+def generate_otp():
     otp = random.randint(100000, 999999)
-    otp_storage[email] = {'otp': otp, 'expires_at': datetime.now() + timedelta(minutes=5)}
-    return otp
-
+    expires_at = datetime.now() + timedelta(minutes=5)
+    return otp, expires_at
 # Send OTP via email
 def send_otp_email(email, otp):
     try:
@@ -29,12 +29,33 @@ def send_otp_email(email, otp):
 
 # Verify OTP
 def verify_otp(email, otp):
-    stored = otp_storage.get(email)
-    if not stored:
-        return False
-    
-    # Check if OTP is expired
-    if datetime.now() > stored['expires_at']:
-        return False
+    mongo = current_app.mongo
 
-    return stored['otp'] == int(otp)
+    # Find the pending user
+    pending_user = mongo.db.pending_users.find_one({"email": email})
+    
+    if not pending_user:
+        return {"success": False, "message": "No pending verification for this email"}
+
+    # Check if OTP is expired
+    if datetime.now() > pending_user.get("otp_expires_at"):
+        mongo.db.pending_users.delete_one({"email": email})
+        return {"success": False, "message": "OTP has expired. Please sign up again."}
+
+    # Check if OTP matches
+    if pending_user.get("otp") == int(otp):
+        # Remove fields we don't want to store in the final users collection
+        user_data = pending_user.copy()
+        user_data.pop("_id", None)
+        user_data.pop("otp", None)
+        user_data.pop("otp_expires_at", None)
+
+        # Insert into main users collection
+        mongo.db.users.insert_one(user_data)
+
+        # Remove from pending_users
+        mongo.db.pending_users.delete_one({"email": email})
+
+        return {"success": True, "message": "OTP verified. User registration completed."}
+    else:
+        return {"success": False, "message": "Invalid OTP"}
