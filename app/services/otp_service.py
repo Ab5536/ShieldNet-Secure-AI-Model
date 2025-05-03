@@ -32,31 +32,46 @@ def verify_otp(email, otp):
     mongo = current_app.mongo
 
     pending_user = mongo.db.pending_users.find_one({"email": email})
-    
+
     if not pending_user:
-        return {"success": False, "message": "No pending verification for this email"}
+        return {
+            "success": False,
+            "reason": "no_otp_found",
+            "message": "No OTP verification request found for this email. Please sign up first."
+        }, 404
 
     if datetime.now() > pending_user.get("otp_expires_at"):
         mongo.db.pending_users.delete_one({"email": email})
-        return {"success": False, "message": "OTP has expired. Please sign up again."}
+        return {
+            "success": False,
+            "reason": "otp_expired",
+            "message": "OTP has expired. Please start the signup process again."
+        }, 410
 
-    if pending_user.get("otp") == int(otp):
-        user_data = pending_user.copy()
-        user_data.pop("_id", None)
-        user_data.pop("otp", None)
-        user_data.pop("otp_expires_at", None)
+    try:
+        otp = int(otp)
+    except ValueError:
+        return {
+            "success": False,
+            "reason": "invalid_format",
+            "message": "OTP must be a numeric value."
+        }, 400
 
-        mongo.db.users.insert_one(user_data)
-        mongo.db.pending_users.delete_one({"email": email})
-
-        # ✅ Return the user data so the frontend can store it
+    if pending_user.get("otp") == otp:
         return {
             "success": True,
-            "message": "OTP verified. User registration completed.",
-            "user": {
-                "name": user_data.get("name"),
-                "email": user_data.get("email")
+            "reason": "otp_verified",
+            "message": "OTP is valid.",
+            "user_data": {
+                "name": pending_user.get("name"),
+                "email": pending_user.get("email"),
+                "password": pending_user.get("password"),  # assuming it's hashed already
+                "gender": pending_user.get("gender")
             }
-        }
-    else:
-        return {"success": False, "message": "Invalid OTP"}
+        }, 200
+
+    return {
+        "success": False,
+        "reason": "invalid_otp",
+        "message": "The OTP you entered is incorrect."
+    }, 401

@@ -1,17 +1,34 @@
 from flask import Blueprint, request, jsonify
 from app.services.otp_service import generate_otp, send_otp_email, verify_otp
-
+from flask import current_app
 otp_bp = Blueprint('otp_routes', __name__)
 
-@otp_bp.route('/send-otp', methods=['POST'])
+@otp_bp.route('/api/send-otp', methods=['POST'])
 def send_otp_route():
-    user_email = request.json.get('email')
-    if not user_email:
-        return jsonify({"error": "Email is required"}), 400
-    
-    otp = generate_otp(user_email)  # Generate OTP and store it temporarily (in-memory or DB)
-    if send_otp_email(user_email, otp):  # Send OTP via email
-        return jsonify({"message": "OTP sent successfully"}), 200
+    mongo = current_app.mongo
+    # Get form data
+    email = request.form.get("email")
+    name = request.form.get("name")
+    password = request.form.get("password")
+    gender = request.form.get("gender")
+    if not all([email, name, password, gender]):
+        return jsonify({"error": "Missing required fields"}), 400
+    if mongo.db.users.find_one({"email": email}):
+        return jsonify({"error": "User already exists"}), 409
+    if mongo.db.pending_users.find_one({"email": email}):
+        return jsonify({"error": "Previous Data Applicable"}), 304
+    otp, expires_at = generate_otp()  
+    if send_otp_email(email, otp):
+        # Store user data and OTP with expiration time in pending_users
+        mongo.db.pending_users.insert_one({
+            "email": email,
+            "name": name,
+            "password": password,
+            "gender": gender,
+            "otp": otp,
+            "otp_expires_at": expires_at
+        })
+        return jsonify({"message": "OTP sent to email. Please verify to complete registration."}), 200
     else:
         return jsonify({"error": "Error sending OTP"}), 500
 

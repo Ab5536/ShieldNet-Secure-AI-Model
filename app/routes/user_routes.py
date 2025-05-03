@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, current_app
 from flask_cors import cross_origin
 from bson import ObjectId
-from app.services.otp_service import generate_otp, send_otp_email
+from app.services.otp_service import generate_otp, send_otp_email, verify_otp
 
 users = Blueprint('user_routes', __name__)
 
@@ -10,39 +10,43 @@ users = Blueprint('user_routes', __name__)
 @cross_origin()
 def signup():
     mongo = current_app.mongo
-
-    # Get form data
     email = request.form.get("email")
     name = request.form.get("name")
-    phone = request.form.get("phoneNumber")
     password = request.form.get("password")
-    city = request.form.get("cityName")
     gender = request.form.get("gender")
+    otp=request.form.get("otp")	
+    if not all([email, name, password, gender,otp]):
+        return jsonify({
+            "success": False,
+            "message": "Email and OTP are required."
+        }), 400
 
-    if not all([email, name, phone, password, city, gender]):
-        return jsonify({"error": "Missing required fields"}), 400
+    # Step 1: Verify OTP
+    verification_result, status_code = verify_otp(email, otp)
 
-    if mongo.db.users.find_one({"email": email}) or mongo.db.pending_users.find_one({"email": email}):
-        return jsonify({"error": "User already exists or pending verification"}), 409
+    if not verification_result.get("success"):
+        return jsonify(verification_result), status_code
 
-    otp, expires_at = generate_otp()
-    print("Generated OTP:", otp)
+    user_data = verification_result.get("user_data")
 
-    if send_otp_email(email, otp):
-        # Store user data and OTP with expiration time in pending_users
-        mongo.db.pending_users.insert_one({
-            "email": email,
-            "name": name,
-            "phone": phone,
-            "password": password,
-            "city": city,
-            "gender": gender,
-            "otp": otp,
-            "otp_expires_at": expires_at
-        })
-        return jsonify({"message": "OTP sent to email. Please verify to complete registration."}), 200
-    else:
-        return jsonify({"error": "Error sending OTP"}), 500
+    # Step 2: Save verified user to permanent collection
+    try:
+        mongo.db.users.insert_one(user_data)
+        mongo.db.pending_users.delete_one({"email": email})
+        return jsonify({
+            "success": True,
+            "message": "User successfully registered.",
+            "user": {
+                "name": user_data["name"],
+                "email": user_data["email"]
+            }
+        }), 201
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": "Error saving user to database.",
+            "error": str(e)
+        }), 500
 
 
 # SIGNIN ROUTE
