@@ -7,7 +7,7 @@ import "./Signup.css";
 const Signup = () => {
   const backendURL = process.env.REACT_APP_BACKEND_URI;
   const navigate = useNavigate();
-
+  
   const [formData, setFormData] = useState({
     name: "",
     password: "",
@@ -22,7 +22,7 @@ const Signup = () => {
   const [otp, setOtp] = useState("");
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [emailForOtp, setEmailForOtp] = useState("");
-
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -68,7 +68,8 @@ const Signup = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-      if(res.status==200){
+      console.log(res)
+      if (res.status === 200 && res.data.user) {
         const user = res.data.user;
         localStorage.setItem("user", JSON.stringify(user));
         navigate('/');
@@ -80,6 +81,7 @@ const Signup = () => {
   };
 
   const submitHandler = (e) => {
+    
     e.preventDefault();
     if (validateForm()) {
       signUpRouting();
