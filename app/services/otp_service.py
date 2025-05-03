@@ -1,9 +1,11 @@
-import random
-from flask import current_app
-from flask_mail import Message
-from datetime import datetime, timedelta
+# app/services/otp_service.py
 
-otp_storage = {}  # Use this temporarily, or replace with database
+import random
+from datetime import datetime, timedelta
+from flask_mail import Mail, Message
+from flask import current_app
+
+otp_storage = {}  # Store OTP data temporarily (you can replace this with a database)
 
 # Generate OTP and store it with expiration time
 def generate_otp(email):
@@ -14,12 +16,11 @@ def generate_otp(email):
 # Send OTP via email
 def send_otp_email(email, otp):
     try:
-        # Access the mail object via current_app after app is initialized
+        # Create Mail instance only when needed
+        mail = current_app.mail  # Initialize mail object using current_app
         msg = Message('Your OTP Code', recipients=[email])
         msg.body = f"Your OTP code is: {otp}"
-
-        # Access mail using current_app
-        mail = current_app.mail
+        # Send email using the created mail object
         mail.send(msg)
         return True
     except Exception as e:

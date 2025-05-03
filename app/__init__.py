@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_pymongo import PyMongo
 from flask_cors import CORS
-from app.routes.users import users  # Import the users blueprint
+from app.routes.user_routes import users  # Import the users blueprint
 from app.routes.otp_routes import otp_bp  # OTP routes blueprint
 from app.routes.ml_routes import ml_bp  # Uncomment if you are using ML routes
 from config import Config
@@ -9,13 +9,13 @@ from flask_mail import Mail
 
 def create_app():
     app = Flask(__name__)
-    
     # Load configuration from Config class
     app.config.from_object(Config)
-    
+
     # Initialize Flask extensions
+    mail=Mail(app)
     mongo = PyMongo(app)
-    mail = Mail(app)  # Initialize mail for OTP or other email functionalities
+    
     
     # Enable CORS for the app
     CORS(app)
@@ -27,6 +27,7 @@ def create_app():
     
     # Test MongoDB connection
     with app.app_context():
+        
         try:
             mongo.db.command("ping")
             print("✅ Connected to MongoDB!")

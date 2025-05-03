@@ -17,8 +17,8 @@ def send_otp_route():
 
 @otp_bp.route('/verify-otp', methods=['POST'])
 def verify_otp_route():
-    user_email = request.json.get('email')
-    user_otp = request.json.get('otp')
+    user_email = request.form.get('email')
+    user_otp = request.form.get('otp')
     if not user_email or not user_otp:
         return jsonify({"error": "Email and OTP are required"}), 400
     

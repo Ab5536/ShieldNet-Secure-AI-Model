@@ -1,15 +1,16 @@
 from flask import Blueprint, request, jsonify, current_app
 from flask_cors import cross_origin
-from bson import ObjectId
 
-users = Blueprint('users', __name__)
+from bson import ObjectId
+from app.services.otp_service import generate_otp, send_otp_email
+
+users = Blueprint('user_routes', __name__)
 
 # SIGNUP ROUTE
 @users.route("/api/signup", methods=["POST"])
 @cross_origin()
 def signup():
     mongo = current_app.mongo
-
     # Get form data
     email = request.form.get("email")
     name = request.form.get("name")
@@ -21,27 +22,25 @@ def signup():
     if not all([email, name, phone, password, city, gender]):
         return jsonify({"error": "Missing required fields"}), 400
 
-    if mongo.db.users.find_one({"email": email}):
-        return jsonify({"error": "User already exists"}), 409
+    if mongo.db.users.find_one({"email": email}) or mongo.db.pending_users.find_one({"email": email}):
+        return jsonify({"error": "User already exists or pending verification"}), 409
 
-    result = mongo.db.users.insert_one({
-        "email": email,
-        "name": name,
-        "phone": phone,
-        "password": password,
-        "city": city,
-        "gender": gender
-    })
-
-    # Return user info
-    return jsonify({
-        "message": "User created successfully",
-        "user": {
-            "name": name,
+    otp = generate_otp(email)
+    print("in User Route: " + str(otp))
+    if send_otp_email(email, otp):
+        # Store user data and OTP in pending_users collection
+        mongo.db.pending_users.insert_one({
             "email": email,
-            "user_id": str(result.inserted_id)
-        }
-    }), 200
+            "name": name,
+            "phone": phone,
+            "password": password,
+            "city": city,
+            "gender": gender,
+            "otp": otp
+        })
+        return jsonify({"message": "OTP sent to email. Please verify to complete registration."}), 200
+    else:
+        return jsonify({"error": "Error sending OTP"}), 500
 
 
 # SIGNIN ROUTE
