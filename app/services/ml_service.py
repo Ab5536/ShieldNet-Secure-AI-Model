@@ -4,6 +4,7 @@ import os
 import numpy as np
 from torchvision import transforms
 from PIL import Image, UnidentifiedImageError
+from io import BytesIO
 
 model_path = 'app/machine_learning/model_1_Binary.pkl'
 def load_model(path):
@@ -59,3 +60,31 @@ def predict_image(file):
     except Exception as e:
         print(f"❌ Unexpected error: {e}")
         return f"Unexpected error occurred: {str(e)}"
+
+
+def validFiletype(image_file):
+    try:
+        ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'bmp', 'tiff', 'webp','heic'}
+        MAX_FILE_SIZE_MB = 5  # reasonable size limit
+        # Check filename extension
+        filename = image_file.filename.lower()
+        if '.' not in filename or filename.rsplit('.', 1)[1] not in ALLOWED_EXTENSIONS:
+            print("❌ Unsupported file extension.")
+            return False
+
+        # Check file size
+        image_file.seek(0, 2)  # Move to end of file
+        file_size = image_file.tell() / (1024 * 1024)  # size in MB
+        if file_size > MAX_FILE_SIZE_MB:
+            print(f"❌ File too large: {file_size:.2f} MB")
+            return False
+        image_file.seek(0)  # Reset pointer
+
+        # Check if it's a valid image
+        Image.open(image_file).verify()
+        image_file.seek(0)
+        return True
+
+    except Exception as e:
+        print(f"❌ Image verification failed: {e}")
+        return False
