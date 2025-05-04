@@ -26,52 +26,63 @@ const Signin = () => {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-
   const SigninRouting = async () => {
     const form = new FormData();
     for (let key in formData) {
       form.append(key, formData[key]);
     }
-
+  
     try {
-      const result = await axios.post(`${backendURL}/api/signin`, form, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      const response = await axios.post(`${backendURL}/api/signin`, form, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
-
-      if (result.status === 200) {
-        const user = result.data.user;
+  
+      if (response.data.success) {
+        const user = response.data.user;
         localStorage.setItem("user", JSON.stringify(user));
-        setError(""); // Clear previous error
-        alert("✅ User signed in successfully!");
+        setError("");
+        alert("✅ Welcome back, " + user.name + "!");
         navigate("/");
-      } else if (result.status === 404) {
-        const msg = "No user found with these credentials";
+      } else {
+        const msg = response.data.error || "Something went wrong. Please try again.";
         setError(msg);
-        alert(msg);
-      } else if (result.status === 500) {
-        const msg = "Server error, please try again later.";
-        setError(msg);
-        alert(msg);
       }
+  
     } catch (error) {
-      console.error("Error during login:", error);
-      const msg = "An error occurred, please try again later.";
-      setError(msg);
-      alert(msg);
+      if (error.response) {
+        let msg;
+        const status = error.response.status;
+  
+        if (status === 400) {
+          msg = "Please fill in all required fields.";
+        } else if (status === 404) {
+          msg = "No account found with this email.";
+        } else if (status === 401) {
+          msg = "Incorrect password. Please try again.";
+        } else if (status === 500) {
+          msg = "Server error. Please try again later.";
+        } else {
+          msg = "Something went wrong. Please try again.";
+        }
+  
+        setError(msg);
+      } else {
+        // Avoid "Network error" wording
+        setError("Unable to connect. Please try again later.");
+      }
     }
   };
-
+  
+  
   const submitHandler = (e) => {
     e.preventDefault();
     if (formData.email && formData.password) {
       SigninRouting();
     } else {
-      const msg = "Please fill in all fields.";
-      setError(msg);
-      alert(msg);
+      setError("Please fill in all required fields.");
     }
+  };
+  
   };
 
   return (
