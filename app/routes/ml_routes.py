@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from app.services.ml_service import predict_image
 from flask_cors import cross_origin
-
+from app.routes.user_routes import upload_image
 ml_bp = Blueprint('ml_routes', __name__)
 
 @ml_bp.route('/api/predict', methods=['POST'])
@@ -17,6 +17,7 @@ def predict():
         result = predict_image(file)
         print("✅ Prediction complete")
         print(f"🔍 Prediction result: {result}")
+        upload_image(file,)
         return jsonify({"prediction": result}), 200
 
     except ValueError as ve:

@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify, current_app
 from flask_cors import cross_origin
 from bson import ObjectId
 from app.services.otp_service import generate_otp, send_otp_email, verify_otp
+from app.services.cloudinary_service import upload_image_to_cloudinary
 
 users = Blueprint('user_routes', __name__)
 
@@ -85,3 +86,36 @@ def signin():
     except Exception as e:
         # Catch any unexpected errors
         return jsonify({"success": False, "error": f"Internal Server Error: {str(e)}"}), 500
+    
+@users.route('/upload-image', methods=['POST'])
+def upload_image():
+    mongo = current_app.mongo
+    if 'image' not in request.files:
+        return jsonify({"error": "No image file provided"}), 400
+
+    image_file = request.files['image']
+    email = request.form.get('email')
+
+    if not email:
+        return jsonify({"error": "Email is required"}), 400
+    if image_file.filename == '':
+        return jsonify({"error": "Empty filename"}), 400
+    try:
+        image_url = upload_image_to_cloudinary(image_file)
+
+        # Append the image URL to user's 'images' array
+        result = mongo.users.update_one(
+            {"email": email},
+            {"$push": {"images": image_url}}  # $push adds to array
+        )
+
+        if result.matched_count == 0:
+            return jsonify({"error": "User not found"}), 404
+
+        return jsonify({
+            "message": "Image uploaded successfully",
+            "url": image_url
+        }), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
