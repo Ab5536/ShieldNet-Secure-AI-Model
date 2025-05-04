@@ -20,10 +20,7 @@ const Signup = () => {
   const [fieldErrors, setFieldErrors] = useState({});
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [otp, setOtp] = useState("");
-  const [emailForOtp, setEmailForOtp] = useState("");
   const [termsAccepted, setTermsAccepted] = useState(false); // Checkbox state
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -101,7 +98,7 @@ const Signup = () => {
   };
 
   const validateForm = () => {
-    const { email, otp, name, password, gender } = formData;
+    const { email, name, password, gender } = formData;
     const errors = {};
 
     if (!email) errors.email = "Email is required.";

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import "./Homepage.css";
 import Header from "../../Components/Header/Header";
 import ModelML from "../../Components/ModelML/ModelML";
@@ -11,7 +11,7 @@ import Footer from "../../Components/Footer/Footer";
 import NewVisitor from "../../Components/Newvisitor/Newvisitor";
 
 const Homepage = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const [user, setUser] = useState(null);
 

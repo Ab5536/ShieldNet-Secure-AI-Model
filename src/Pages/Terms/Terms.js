@@ -1,5 +1,5 @@
 import React from "react";
-import { useHistory, useNavigate } from "react-router-dom"; // For routing and handling back button
+import { useNavigate } from "react-router-dom"; // For routing and handling back button
 import "./Terms.css";
 
 const Terms = () => {

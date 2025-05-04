@@ -17,14 +17,14 @@ const Signin = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: value,
-    });
+    }));
   };
 
   const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
+    setShowPassword((prev) => !prev);
   };
 
   const SigninRouting = async () => {
@@ -45,27 +45,18 @@ const Signin = () => {
         alert("✅ Welcome back, " + user.name + "!");
         navigate("/");
       } else {
-        const msg =
-          response.data.error || "Something went wrong. Please try again.";
+        const msg = response.data.error || "Something went wrong. Please try again.";
         setError(msg);
       }
     } catch (error) {
       if (error.response) {
         let msg;
         const status = error.response.status;
-
-        if (status === 400) {
-          msg = "Please fill in all required fields.";
-        } else if (status === 404) {
-          msg = "No account found with this email.";
-        } else if (status === 401) {
-          msg = "Incorrect password. Please try again.";
-        } else if (status === 500) {
-          msg = "Server error. Please try again later.";
-        } else {
-          msg = "Something went wrong. Please try again.";
-        }
-
+        if (status === 400) msg = "Please fill in all required fields.";
+        else if (status === 404) msg = "No account found with this email.";
+        else if (status === 401) msg = "Incorrect password. Please try again.";
+        else if (status === 500) msg = "Server error. Please try again later.";
+        else msg = "Something went wrong. Please try again.";
         setError(msg);
       } else {
         setError("Unable to connect. Please try again later.");
@@ -118,10 +109,14 @@ const Signin = () => {
         </form>
 
         <p className="signup-link">
-          Don't have an account? <a href="/signup">Sign up</a>
+          Don't have an account?
+          <span onClick={() => navigate("/signup")} className="signup-text">
+            {" "}Sign up
+          </span>
         </p>
+
         <p className="back-link" onClick={() => navigate(-1)}>
-          ← Back 
+          ← Back
         </p>
       </div>
     </div>
