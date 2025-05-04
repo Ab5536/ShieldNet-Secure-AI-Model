@@ -121,7 +121,7 @@ const Signin = () => {
           Don't have an account? <a href="/signup">Sign up</a>
         </p>
         <p className="back-link" onClick={() => navigate(-1)}>
-          ← Back to Previous Page
+          ← Back 
         </p>
       </div>
     </div>

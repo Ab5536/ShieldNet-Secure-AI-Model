@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import InputField from "../Signin/Inputfield/InputField";
-import { FiEye, FiEyeOff } from "react-icons/fi";  // Eye icon import
+import { FiEye, FiEyeOff } from "react-icons/fi"; // Eye icon import
 import "./Signup.css";
 
 const Signup = () => {
@@ -14,7 +14,7 @@ const Signup = () => {
     password: "",
     email: "",
     gender: "",
-    otp: ""
+    otp: "",
   });
 
   const [fieldErrors, setFieldErrors] = useState({});
@@ -22,6 +22,7 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [otp, setOtp] = useState("");
   const [emailForOtp, setEmailForOtp] = useState("");
+  const [termsAccepted, setTermsAccepted] = useState(false); // Checkbox state
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -121,6 +122,10 @@ const Signup = () => {
         setFieldErrors({ otp: "otp is missing." });
         return;
       }
+      if (!termsAccepted) {
+        setError("You must accept the terms and conditions to proceed.");
+        return;
+      }
       signUpRouting();
     } else {
       setError("Please fill all the fields.");
@@ -129,6 +134,10 @@ const Signup = () => {
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
+  };
+
+  const handleTermsChange = () => {
+    setTermsAccepted(!termsAccepted);
   };
 
   return (
@@ -144,6 +153,7 @@ const Signup = () => {
             onChange={handleChange}
           />
           {fieldErrors.email && <p className="error-message">{fieldErrors.email}</p>}
+          
           <div className="password-container">
             <InputField
               name="password"
@@ -171,7 +181,6 @@ const Signup = () => {
             onChange={handleChange}
           />
           {fieldErrors.name && <p className="error-message">{fieldErrors.name}</p>}
-
 
           <select
             className="form-select"
@@ -205,6 +214,23 @@ const Signup = () => {
           {fieldErrors.otp && <p className="error-message">{fieldErrors.otp}</p>}
 
           {error && <p className="error-message">{error}</p>}
+
+          <div className="terms-container">
+            <label className="terms-checkbox-label">
+              <input
+                type="checkbox"
+                checked={termsAccepted}
+                onChange={handleTermsChange}
+                required
+              />
+              <span className="checkbox-text">
+                By signing up, you agree to our{" "}
+                <Link to="/terms" className="terms-link">
+                  Terms & Conditions
+                </Link>
+              </span>
+            </label>
+          </div>
 
           <button className="submit-button" type="submit">
             Sign Up

@@ -189,7 +189,60 @@
     background-color: #2575fc;
     color: #fff;
 }
+.terms-container {
+  margin-top: 15px;
+  font-size: 0.9rem;
+  text-align: center;
+}
 
+/* Styling the checkbox label for better alignment */
+.terms-checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 0.9rem; /* Adjust font size to make it smaller */
+}
+
+.checkbox-text {
+  margin-left: 8px; /* Small gap between the checkbox and text */
+}
+
+/* Reduce the size of the checkbox */
+.terms-checkbox-label input[type="checkbox"] {
+  width: 16px; /* Smaller checkbox */
+  height: 16px;
+  margin: 0; /* Remove default margin */
+}
+
+/* Link to terms and conditions */
+.terms-link {
+  color: #007bff;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.terms-link:hover {
+  text-decoration: none;
+}
+
+/* Adjust form width if needed */
+.signup-card {
+  max-width: 480px;
+  width: 100%;
+  padding: 40px 30px;
+  text-align: center;
+}
+
+/* Padding adjustments for smaller screens */
+@media (max-width: 600px) {
+  .terms-container {
+    font-size: 0.85rem; /* Slightly smaller font on small screens */
+  }
+  .checkbox-text {
+    font-size: 0.85rem; /* Small text size for better alignment */
+  }
+}
+  
 /* Animation */
 @keyframes fadeIn {
     from {

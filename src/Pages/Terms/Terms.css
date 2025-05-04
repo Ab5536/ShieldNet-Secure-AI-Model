@@ -1,0 +1,39 @@
+.terms-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 30px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    line-height: 1.6;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .terms-container h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+  
+  .terms-container h2 {
+    margin-top: 20px;
+    font-size: 1.3rem;
+  }
+  
+  .terms-container ul {
+    margin-left: 20px;
+  }
+  
+  .back-button {
+    margin-top: 30px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .back-button:hover {
+    background-color: #0056b3;
+  }
+  
