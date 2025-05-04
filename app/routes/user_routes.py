@@ -7,7 +7,6 @@ users = Blueprint('user_routes', __name__)
 
 # SIGNUP ROUTE
 @users.route("/api/signup", methods=["POST"])
-@cross_origin()
 def signup():
     mongo = current_app.mongo
     email = request.form.get("email")
@@ -17,6 +16,7 @@ def signup():
     otp=request.form.get("otp")	
     if not all([email, name, password, gender,otp]):
         return jsonify({
+            
             "success": False,
             "message": "Email and OTP are required."
         }), 400
@@ -51,7 +51,6 @@ def signup():
 
 # SIGNIN ROUTE
 @users.route("/api/signin", methods=["POST"])
-@cross_origin()
 def signin():
     try:
         mongo = current_app.mongo
