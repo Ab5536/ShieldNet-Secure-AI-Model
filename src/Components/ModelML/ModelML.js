@@ -9,7 +9,7 @@ const ModelML = () => {
   const [loading, setLoading] = useState(false);
 
   // Retrieve user email from local storage
-  const userEmail = localStorage.getItem("userEmail"); // Make sure you are storing the user's email as "userEmail"
+  const userEmail = localStorage.getItem("email"); // Make sure you are storing the user's email as "userEmail"
 
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];

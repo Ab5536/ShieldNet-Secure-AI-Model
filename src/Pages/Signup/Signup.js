@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import InputField from "../Signin/Inputfield/InputField";
-import { FiEye, FiEyeOff } from "react-icons/fi"; // Eye icon import
+import { FiEye, FiEyeOff } from "react-icons/fi";
 import "./Signup.css";
 
 const Signup = () => {
@@ -20,7 +20,8 @@ const Signup = () => {
   const [fieldErrors, setFieldErrors] = useState({});
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [termsAccepted, setTermsAccepted] = useState(false); // Checkbox state
+  const [termsAccepted, setTermsAccepted] = useState(false);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -48,15 +49,15 @@ const Signup = () => {
 
         if (result.status === 200) {
           setError("");
-          alert("otp sent successfully to " + formData.email);
+          alert("OTP sent successfully to " + formData.email);
         } else if (result.status === 304) {
-          alert("Previous otp not expired yet.");
+          alert("Previous OTP not expired yet.");
         } else {
-          alert("Failed to send otp.");
+          alert("Failed to send OTP.");
         }
       }
     } catch (error) {
-      alert("An error occurred while sending the otp.");
+      alert("An error occurred while sending the OTP.");
     }
   };
 
@@ -77,6 +78,8 @@ const Signup = () => {
         setError("");
         const user = result.data.user;
         localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("username", user.name);
+        localStorage.setItem("email", user.email);
         alert("Signup successful!");
         navigate('/');
       } else if (result.status === 410) {
@@ -116,7 +119,7 @@ const Signup = () => {
 
     if (validateForm()) {
       if (!otp) {
-        setFieldErrors({ otp: "otp is missing." });
+        setFieldErrors({ otp: "OTP is missing." });
         return;
       }
       if (!termsAccepted) {
@@ -158,14 +161,14 @@ const Signup = () => {
               placeholder="Enter Your Password"
               value={formData.password}
               onChange={handleChange}
-              autoComplete="new-password" // To suggest a new password from the browser
+              autoComplete="new-password"
             />
             <button
               type="button"
               className="show-password-btn"
               onClick={togglePasswordVisibility}
             >
-              {showPassword ? <FiEyeOff /> : <FiEye />} {/* Eye Icon */}
+              {showPassword ? <FiEyeOff /> : <FiEye />}
             </button>
           </div>
           {fieldErrors.password && <p className="error-message">{fieldErrors.password}</p>}
@@ -197,7 +200,7 @@ const Signup = () => {
               name="otp"
               value={formData.otp}
               onChange={handleChange}
-              placeholder="Enter otp"
+              placeholder="Enter OTP"
               className="otp-input"
             />
             <button
@@ -205,7 +208,7 @@ const Signup = () => {
               onClick={sendotp}
               className="send-otp-btn"
             >
-              Send otp
+              Send OTP
             </button>
           </div>
           {fieldErrors.otp && <p className="error-message">{fieldErrors.otp}</p>}

@@ -7,10 +7,14 @@ import logo from "../../images/logo.png";
 const Header = () => {
   const route = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
+  const username = localStorage.getItem("username"); // Accessing the username from localStorage
+  const email = localStorage.getItem("email"); // Accessing the email from localStorage
 
   const handleLogout = () => {
     localStorage.removeItem("user");
-    route("/signin");
+    localStorage.removeItem("username"); // Remove username from localStorage
+    localStorage.removeItem("email"); // Remove email from localStorage
+    route("/");
   };
 
   return (
@@ -47,7 +51,8 @@ const Header = () => {
       <div className="nav-right">
         {user ? (
           <>
-            <span className="username">Hi, {user.name}</span>
+            <span className="username">Hi, {username}</span> {/* Display username */}
+            {/* <span className="email">Email: {email}</span> Display email */}
             <button className="logout-button" onClick={handleLogout}>
               Logout
             </button>

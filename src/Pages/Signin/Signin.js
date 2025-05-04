@@ -40,7 +40,11 @@ const Signin = () => {
 
       if (response.data.success) {
         const user = response.data.user;
-        localStorage.setItem("user", JSON.stringify(user));
+        // Store user data in localStorage
+        localStorage.setItem("user", JSON.stringify(user)); // Entire user object
+        localStorage.setItem("username", user.name); // Store username separately
+        localStorage.setItem("email", user.email); // Store email separately
+
         setError("");
         alert("✅ Welcome back, " + user.name + "!");
         navigate("/");
