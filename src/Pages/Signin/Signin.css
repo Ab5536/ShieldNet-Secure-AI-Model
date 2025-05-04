@@ -129,6 +129,42 @@
     z-index: 1000;
     animation: slideIn 0.3s ease forwards;
   }
+  .toast-notification {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    margin-bottom: 10px;
+    border-radius: 5px;
+  }
+  
+  .error-alert {
+    background-color: #f44336;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    border-radius: 5px;
+    margin-bottom: 10px;
+  }
+  
+  .password-wrapper {
+    position: relative;
+  }
+  
+  .password-wrapper input {
+    width: 100%;
+    padding-right: 40px; /* space for eye icon */
+  }
+  
+  .eye-icon {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #555;
+    font-size: 1.1rem;
+  }
   
   /* Animations */
   @keyframes fadeIn {

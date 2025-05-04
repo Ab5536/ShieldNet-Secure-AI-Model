@@ -3,18 +3,18 @@ import { useNavigate } from "react-router-dom";
 import "./Signin.css";
 import InputField from "./Inputfield/InputField";
 import axios from "axios";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Signin = () => {
   const backendURL = process.env.REACT_APP_BACKEND_URI;
   const navigate = useNavigate();
-  const [showToast, setShowToast] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
-  // Handle form input change
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -23,59 +23,64 @@ const Signin = () => {
     });
   };
 
-  // Sign-in logic and API call
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   const SigninRouting = async () => {
     const form = new FormData();
     for (let key in formData) {
-      form.append(key, formData[key])
+      form.append(key, formData[key]);
     }
+
     try {
       const result = await axios.post(`${backendURL}/api/signin`, form, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
+
       if (result.status === 200) {
         const user = result.data.user;
         localStorage.setItem("user", JSON.stringify(user));
-        setShowToast(true); // Show toast
-        setTimeout(() => {
-          navigate("/");
-        }, 1500); // Navigate after showing toast
-      }
-
-      else if (result.status === 404) {
-        setError("No user found with these credentials");
+        setError(""); // Clear previous error
+        alert("✅ User signed in successfully!");
+        navigate("/");
+      } else if (result.status === 404) {
+        const msg = "No user found with these credentials";
+        setError(msg);
+        alert(msg);
       } else if (result.status === 500) {
-        setError("Server error, please try again later.");
+        const msg = "Server error, please try again later.";
+        setError(msg);
+        alert(msg);
       }
     } catch (error) {
       console.error("Error during login:", error);
-      setError("An error occurred, please try again later.");
+      const msg = "An error occurred, please try again later.";
+      setError(msg);
+      alert(msg);
     }
   };
 
-  // Form submission handler
   const submitHandler = (e) => {
     e.preventDefault();
     if (formData.email && formData.password) {
       SigninRouting();
     } else {
-      setError("Please fill in all fields.");
+      const msg = "Please fill in all fields.";
+      setError(msg);
+      alert(msg);
     }
   };
 
-
   return (
     <div className="signin-container">
-      {showToast && (
-        <div className="toast-notification">
-          ✅ User signed in successfully!
-        </div>
-      )}
       <div className="signin-card">
         <h1 className="signin-title">Virtual Disease Detection</h1>
-        <h2 className="signin-subtitle"></h2>
+
+        {error && <div className="error-alert">❌ {error}</div>}
+
         <form className="signin-form" onSubmit={submitHandler}>
           <InputField
             name="email"
@@ -84,14 +89,21 @@ const Signin = () => {
             value={formData.email}
             onChange={handleChange}
           />
-          <InputField
-            name="password"
-            type="password"
-            placeholder="Enter your password"
-            value={formData.password}
-            onChange={handleChange}
-          />
-          {error && <p className="error-message">{error}</p>}
+
+          <div className="password-wrapper">
+            <input
+              name="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter your password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+            <span className="eye-icon" onClick={togglePasswordVisibility}>
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </span>
+          </div>
+
           <button type="submit" className="submit-button">
             Sign In
           </button>
@@ -103,7 +115,6 @@ const Signin = () => {
         <p className="back-link" onClick={() => navigate(-1)}>
           ← Back to Previous Page
         </p>
-
       </div>
     </div>
   );
