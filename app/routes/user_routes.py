@@ -53,27 +53,36 @@ def signup():
 @users.route("/api/signin", methods=["POST"])
 @cross_origin()
 def signin():
-    mongo = current_app.mongo
+    try:
+        mongo = current_app.mongo
 
-    email = request.form.get("email")
-    password = request.form.get("password")
+        email = request.form.get("email")
+        password = request.form.get("password")
 
-    if not all([email, password]):
-        return jsonify({"error": "Missing required fields"}), 400
+        # Check if email and password are provided
+        if not all([email, password]):
+            return jsonify({"success": False, "error": "Missing email or password."}), 400
 
-    user = mongo.db.users.find_one({"email": email})
+        # Find the user by email
+        user = mongo.db.users.find_one({"email": email})
+        if not user:
+            return jsonify({"success": False, "error": "User not found."}), 404
 
-    if not user:
-        return jsonify({"error": "User not found"}), 404
+        # Check if the password matches
+        if user.get("password") != password:
+            return jsonify({"success": False, "error": "Incorrect password."}), 401
 
-    if user.get("password") != password:
-        return jsonify({"error": "Incorrect password"}), 401
+        # Successful sign in
+        return jsonify({
+            "success": True,
+            "message": "User signed in successfully.",
+            "user": {
+                "name": user["name"],
+                "email": user["email"],
+                "user_id": str(user["_id"])
+            }
+        }), 200
 
-    return jsonify({
-        "message": "User Signed In",
-        "user": {
-            "name": user["name"],
-            "email": user["email"],
-            "user_id": str(user["_id"])
-        }
-    }), 200
+    except Exception as e:
+        # Catch any unexpected errors
+        return jsonify({"success": False, "error": f"Internal Server Error: {str(e)}"}), 500
