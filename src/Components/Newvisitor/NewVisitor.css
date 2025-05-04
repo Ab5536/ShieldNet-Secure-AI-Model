@@ -1,0 +1,51 @@
+.new-visitor-container {
+    background: linear-gradient(to right, #e0eafc, #cfdef3);
+    padding: 80px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .new-visitor-content {
+    background-color: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 60px 40px;
+    border-radius: 24px;
+    max-width: 800px;
+    width: 100%;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+  }
+  
+  .visitor-heading {
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #2d2f36;
+    margin-bottom: 20px;
+  }
+  
+  .visitor-subtext {
+    font-size: 1.2rem;
+    color: #4a4a4a;
+    margin-bottom: 35px;
+    line-height: 1.6;
+  }
+  
+  .visitor-button {
+    background: linear-gradient(to right, #6a11cb, #2575fc);
+    color: white;
+    padding: 14px 28px;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .visitor-button:hover {
+    background: linear-gradient(to right, #5b0eb7, #1f65d8);
+  }
+  

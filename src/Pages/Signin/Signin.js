@@ -26,17 +26,18 @@ const Signin = () => {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
   const SigninRouting = async () => {
     const form = new FormData();
     for (let key in formData) {
       form.append(key, formData[key]);
     }
-  
+
     try {
       const response = await axios.post(`${backendURL}/api/signin`, form, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-  
+
       if (response.data.success) {
         const user = response.data.user;
         localStorage.setItem("user", JSON.stringify(user));
@@ -44,15 +45,15 @@ const Signin = () => {
         alert("✅ Welcome back, " + user.name + "!");
         navigate("/");
       } else {
-        const msg = response.data.error || "Something went wrong. Please try again.";
+        const msg =
+          response.data.error || "Something went wrong. Please try again.";
         setError(msg);
       }
-  
     } catch (error) {
       if (error.response) {
         let msg;
         const status = error.response.status;
-  
+
         if (status === 400) {
           msg = "Please fill in all required fields.";
         } else if (status === 404) {
@@ -64,16 +65,14 @@ const Signin = () => {
         } else {
           msg = "Something went wrong. Please try again.";
         }
-  
+
         setError(msg);
       } else {
-        // Avoid "Network error" wording
         setError("Unable to connect. Please try again later.");
       }
     }
   };
-  
-  
+
   const submitHandler = (e) => {
     e.preventDefault();
     if (formData.email && formData.password) {
@@ -81,8 +80,6 @@ const Signin = () => {
     } else {
       setError("Please fill in all required fields.");
     }
-  };
-  
   };
 
   return (
