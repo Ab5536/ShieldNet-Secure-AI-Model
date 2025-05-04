@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import "./ModelML.css";
 
 const ModelML = () => {
@@ -6,6 +7,9 @@ const ModelML = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [result, setResult] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Retrieve user email from local storage
+  const userEmail = localStorage.getItem("userEmail"); // Make sure you are storing the user's email as "userEmail"
 
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
@@ -15,22 +19,33 @@ const ModelML = () => {
     setResult("Analyzing image...");
     setLoading(true);
 
+    // Create a new FormData object
     const formData = new FormData();
     formData.append("image", file);
 
+    // Append user email from localStorage
+    if (userEmail) {
+      formData.append("email", userEmail);
+    } else {
+      setResult("❌ Error: User email not found.");
+      setLoading(false);
+      return;
+    }
+
     try {
-      const response = await fetch(`${backendURL}/api/predict`, {
-        method: "POST",
-        body: formData,
+      // Send the form data to the backend using Axios
+      const response = await axios.post(`${backendURL}/api/predict`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data", // Ensure we send the data as multipart/form-data
+        },
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Prediction failed");
+      // Check if response is successful
+      if (response.status === 200) {
+        setResult(response.data.prediction || "No disease detected.");
+      } else {
+        throw new Error("Prediction failed");
       }
-
-      const data = await response.json();
-      setResult(data.prediction || "No disease detected.");
     } catch (error) {
       setResult(`❌ Error: ${error.message}`);
     } finally {
