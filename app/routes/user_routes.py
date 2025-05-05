@@ -10,7 +10,6 @@ users = Blueprint('user_routes', __name__)
 @users.route("/api/signup", methods=["POST"])
 def signup():
     mongo = current_app.mongo
-
     # Extract form data
     email = request.form.get("email")
     name = request.form.get("name")

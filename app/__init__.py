@@ -3,7 +3,7 @@ from flask_pymongo import PyMongo
 from flask_cors import CORS
 from app.routes.user_routes import users  # Import the users blueprint
 from app.routes.otp_routes import otp_bp  # OTP routes blueprint
-from app.routes.ml_routes import ml_bp  # Uncomment if you are using ML routes
+#from app.routes.ml_routes import ml_bp  # Uncomment if you are using ML routes
 from config import Config
 from flask_mail import Mail
 
@@ -23,7 +23,7 @@ def create_app():
     # Register blueprints
     app.register_blueprint(users)
     app.register_blueprint(otp_bp)
-    app.register_blueprint(ml_bp)  # Uncomment when ML routes are ready
+    #app.register_blueprint(ml_bp)  # Uncomment when ML routes are ready
     
     # Test MongoDB connection
     with app.app_context():

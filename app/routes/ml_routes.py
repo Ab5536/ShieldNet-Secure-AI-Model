@@ -2,10 +2,12 @@ from flask import Blueprint, request, jsonify,current_app
 from app.services.ml_service import predict_image, validFiletype
 from flask_cors import cross_origin
 from app.services.cloudinary_service import save_image_for_user
-from app.routes.user_routes import upload_image
+from app.utils.jwt_utils import jwt_required
+
 ml_bp = Blueprint('ml_routes', __name__)
 
 @ml_bp.route('/api/predict', methods=['POST'])
+@jwt_required
 def predict():
     mongo = current_app.mongo
     print("📩 Received request for prediction...")
