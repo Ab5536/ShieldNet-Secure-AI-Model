@@ -3,37 +3,44 @@ from flask_cors import cross_origin
 from bson import ObjectId
 from app.services.otp_service import generate_otp, send_otp_email, verify_otp
 from app.services.cloudinary_service import save_image_for_user, upload_image_to_cloudinary
+import bcrypt
 
+from app.utils.auth_util import checkuserPassword, get_user_hashed
 users = Blueprint('user_routes', __name__)
 
 # SIGNUP ROUTE
 @users.route("/api/signup", methods=["POST"])
 def signup():
     mongo = current_app.mongo
+
+    # Extract form data
     email = request.form.get("email")
     name = request.form.get("name")
     password = request.form.get("password")
     gender = request.form.get("gender")
-    otp=request.form.get("otp")	
-    if not all([email, name, password, gender,otp]):
+    otp = request.form.get("otp")
+
+    # Basic validation
+    if not all([email, name, password, gender, otp]):
         return jsonify({
-            
             "success": False,
-            "message": "Email and OTP are required."
+            "message": "All fields including email and OTP are required."
         }), 400
 
     # Step 1: Verify OTP
     verification_result, status_code = verify_otp(email, otp)
-
     if not verification_result.get("success"):
         return jsonify(verification_result), status_code
 
-    user_data = verification_result.get("user_data")
-
-    # Step 2: Save verified user to permanent collection
+    # Step 2: Hash password and store user
     try:
+        user_data = verification_result.get("user_data")
+        user_data["password"] = password  # add password manually before hashing
+        user_data = get_user_hashed(user_data)
+
         mongo.db.users.insert_one(user_data)
         mongo.db.pending_users.delete_one({"email": email})
+
         return jsonify({
             "success": True,
             "message": "User successfully registered.",
@@ -42,13 +49,13 @@ def signup():
                 "email": user_data["email"]
             }
         }), 201
+
     except Exception as e:
         return jsonify({
             "success": False,
             "message": "Error saving user to database.",
             "error": str(e)
         }), 500
-
 
 # SIGNIN ROUTE
 @users.route("/api/signin", methods=["POST"])
@@ -67,9 +74,8 @@ def signin():
         user = mongo.db.users.find_one({"email": email})
         if not user:
             return jsonify({"success": False, "error": "User not found."}), 404
-
-        # Check if the password matches
-        if user.get("password") != password:
+        is_valid = checkuserPassword("inputPassword", user["password"])
+        if not is_valid:
             return jsonify({"success": False, "error": "Incorrect password."}), 401
 
         # Successful sign in
@@ -103,22 +109,3 @@ def upload_image():
     except Exception as e:
         return jsonify({"error": f"Internal server error: {str(e)}"}), 500
     
-@users.route('/test-upload', methods=['POST'])
-def test_upload_to_cloudinary():
-    if 'image' not in request.files:
-        return jsonify({"error": "No image file provided"}), 400
-
-    image_file = request.files['image']
-    
-    if image_file.filename == '':
-        return jsonify({"error": "Invalid image file"}), 400
-
-    try:
-        print("📤 Uploading image to Cloudinary...")
-        url = upload_image_to_cloudinary(image_file)
-        print(f"✅ Uploaded successfully: {url}")
-        return jsonify({"message": "Upload successful", "url": url}), 200
-
-    except Exception as e:
-        print(f"❌ Error uploading to Cloudinary: {str(e)}")
-        return jsonify({"error": str(e)}), 500

@@ -12,7 +12,7 @@ def predict():
 
     # Step 1: Validate image upload
     if 'image' not in request.files:
-        print("❌ No image file provided.")
+        print(" No image file provided.")
         return jsonify({"error": "No image file uploaded."}), 400
 
     file = request.files['image']
@@ -21,17 +21,17 @@ def predict():
     email = request.form.get('email')
 
     if not email:
-        print("❌ Email is missing in request.")
+        print(" Email is missing in request.")
         return jsonify({"error": "Email is required."}), 400
 
     if file.filename == '':
-        print("❌ Empty image filename.")
+        print(" Empty image filename.")
         return jsonify({"error": "Invalid image file."}), 400
 
     # Step 2: Check if user exists in DB
     user = mongo.db.users.find_one({"email": email})
     if not user:
-        print("❌ No user found with this email.")
+        print(" No user found with this email.")
         return jsonify({"error": "User not found"}), 404
 
     try:
