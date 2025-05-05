@@ -1,11 +1,9 @@
 from flask import Blueprint, request, jsonify, current_app
-from flask_cors import cross_origin
 from bson import ObjectId
-from app.services.otp_service import generate_otp, send_otp_email, verify_otp
-from app.services.cloudinary_service import save_image_for_user, upload_image_to_cloudinary
-import bcrypt
-
+from app.services.otp_service import verify_otp
+from app.services.cloudinary_service import save_image_for_user
 from app.utils.auth_util import checkuserPassword, get_user_hashed
+from app.utils.jwt_utils import generate_token, jwt_required
 users = Blueprint('user_routes', __name__)
 
 # SIGNUP ROUTE
@@ -38,18 +36,34 @@ def signup():
         user_data["password"] = password  # add password manually before hashing
         user_data = get_user_hashed(user_data)
 
+        # Insert the user into the users collection
         mongo.db.users.insert_one(user_data)
+
+        # Remove user from pending_users collection after successful signup
         mongo.db.pending_users.delete_one({"email": email})
 
+        # Get the recently inserted user's ID
+        new_user = mongo.db.users.find_one({"email": email})  # Fetch newly inserted user
+        if not new_user:
+            return jsonify({
+                "success": False,
+                "message": "Error fetching user after insertion."
+            }), 500
+
+        # Generate JWT token for the user
+        token = generate_token(new_user["_id"])
+
+        # Successful sign in
         return jsonify({
             "success": True,
-            "message": "User successfully registered.",
+            "message": "User signed in successfully.",
+            "token": token,
             "user": {
-                "name": user_data["name"],
-                "email": user_data["email"]
+                "name": new_user["name"],
+                "email": new_user["email"],
+                "user_id": str(new_user["_id"])
             }
-        }), 201
-
+        }), 200
     except Exception as e:
         return jsonify({
             "success": False,
@@ -77,11 +91,12 @@ def signin():
         is_valid = checkuserPassword("inputPassword", user["password"])
         if not is_valid:
             return jsonify({"success": False, "error": "Incorrect password."}), 401
-
+        token = generate_token(user["_id"])
         # Successful sign in
         return jsonify({
             "success": True,
             "message": "User signed in successfully.",
+            "token": token,
             "user": {
                 "name": user["name"],
                 "email": user["email"],
