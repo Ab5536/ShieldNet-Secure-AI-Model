@@ -41,6 +41,8 @@ const Signup = () => {
         form.append(key, formData[key]);
       }
       if (validateForm()) {
+        alert("Sending OTP to " + formData.email);
+        alert(backendURL + "/api/send-otp");
         const result = await axios.post(`${backendURL}/api/send-otp`, form, {
           headers: {
             "Content-Type": "multipart/form-data",
