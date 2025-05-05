@@ -59,11 +59,13 @@ const Signup = () => {
         }
       }
     } catch (error) {
+      alert(backendURL + "/api/send-otp");
       alert("An error occurred while sending the OTP.");
     }
   };
 
   const signUpRouting = async () => {
+    alert(backendURL + "/api/send-otp");
     const form = new FormData();
     for (let key in formData) {
       form.append(key, formData[key]);
@@ -98,6 +100,7 @@ const Signup = () => {
     }
     catch (error) {
       console.error(error);
+      alert(backendURL + "/api/send-otp");
       alert("An error occurred. Please try again later.");
     }
   };
