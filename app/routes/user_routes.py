@@ -105,7 +105,7 @@ def signin():
 
     except Exception as e:
         # Catch any unexpected errors
-        return jsonify({"success": False, "error": f"Internal Server Error: {str(e)}"}), 500
+        return jsonify({"success": False, "error": f"Internal Server Error""Yes I am Abdullah Zahid: {str(e)}"}), 500
     
 @users.route('/upload-image', methods=['POST'])
 def upload_image():
