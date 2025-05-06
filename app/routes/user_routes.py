@@ -87,7 +87,7 @@ def signin():
         user = mongo.db.users.find_one({"email": email})
         if not user:
             return jsonify({"success": False, "error": "User not found."}), 404
-        is_valid = checkuserPassword("inputPassword", user["password"])
+        is_valid = checkuserPassword(password, user["password"])
         if not is_valid:
             return jsonify({"success": False, "error": "Incorrect password."}), 401
         token = generate_token(user["_id"])
