@@ -36,11 +36,10 @@ const Signin = () => {
     }
 
     try {
-      alert(backendURL + "/api/signin"); // For debugging env var
       const response = await axios.post(`${backendURL}/api/signin`, form, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-
+      
       if (response.data.success) {
         const { user, token } = response.data;
 
@@ -48,7 +47,6 @@ const Signin = () => {
         localStorage.setItem("username", user.name);
         localStorage.setItem("email", user.email);
         localStorage.setItem("token", token);
-
         setError("");
         alert("✅ Welcome back, " + user.name + "!");
         navigate("/");
