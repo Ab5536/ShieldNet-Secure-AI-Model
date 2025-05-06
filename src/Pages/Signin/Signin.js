@@ -8,10 +8,12 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 const Signin = () => {
   const backendURL = process.env.REACT_APP_BACKEND_URI;
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
@@ -34,16 +36,18 @@ const Signin = () => {
     }
 
     try {
+      alert(backendURL + "/api/signin"); // For debugging env var
       const response = await axios.post(`${backendURL}/api/signin`, form, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
       if (response.data.success) {
-        const user = response.data.user;
-        // Store user data in localStorage
-        localStorage.setItem("user", JSON.stringify(user)); // Entire user object
-        localStorage.setItem("username", user.name); // Store username separately
-        localStorage.setItem("email", user.email); // Store email separately
+        const { user, token } = response.data;
+
+        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("username", user.name);
+        localStorage.setItem("email", user.email);
+        localStorage.setItem("token", token);
 
         setError("");
         alert("✅ Welcome back, " + user.name + "!");
@@ -53,6 +57,7 @@ const Signin = () => {
         setError(msg);
       }
     } catch (error) {
+      console.error(error);
       if (error.response) {
         let msg;
         const status = error.response.status;

@@ -1,175 +1,169 @@
-/* Main Reviews Section Styling */
 #reviews {
     padding: 60px 20px;
-    background-color: #f9f9f9;
+    background: linear-gradient(to right, #f9f9f9, #eef6ff);
     color: #333;
     text-align: center;
-}
-
-h2 {
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  h2 {
     font-size: 2.5rem;
     font-weight: 700;
     color: #2c3e50;
     margin-bottom: 40px;
-    letter-spacing: 1px;
-}
-
-/* Reviews Container Styling */
-.reviews-container {
+  }
+  
+  .reviews-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 30px;
     justify-content: center;
-    align-items: start;
-}
-
-/* Review Card Styling */
-.review-card {
+  }
+  
+  .review-card {
     background-color: #fff;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.review-card:hover {
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    transition: 0.3s ease;
+  }
+  
+  .review-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-/* Review Header */
-.review-header {
+  }
+  
+  .review-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
-}
-
-.reviewer-name {
+  }
+  
+  .reviewer-name {
     font-size: 1.2rem;
-    font-weight: 600;
+    font-weight: bold;
     color: #3498db;
-    margin: 0;
-}
-
-.review-rating {
-    display: flex;
-    justify-content: flex-end;
-}
-
-.star {
+  }
+  
+  .review-rating .star {
     color: #f39c12;
     font-size: 1.4rem;
-    cursor: pointer;
-}
-
-.star.empty {
-    color: #ddd;
-}
-
-/* Review Feedback Styling */
-.review-feedback {
+  }
+  
+  .review-rating .star.empty {
+    color: #ccc;
+  }
+  
+  .review-feedback {
+    margin-top: 10px;
     font-size: 1rem;
     color: #555;
-    margin-top: 10px;
     line-height: 1.5;
-}
-
-/* Review Form Styling */
-.review-form {
-    margin-top: 50px;
-    background-color: #fff;
+  }
+  
+  .review-form {
+    margin-top: 60px;
+    background-color: #ffffff;
     padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
-}
-
-.submit-review-form .form-group {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .submit-review-form .form-group {
     margin-bottom: 20px;
     text-align: left;
-}
-
-.submit-review-form label {
-    font-size: 1.1rem;
-    color: #333;
-}
-
-.submit-review-form input,
-.submit-review-form textarea {
+  }
+  
+  .submit-review-form label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  
+  .submit-review-form input,
+  .submit-review-form textarea {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     font-size: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
-
-.submit-review-form button {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    transition: border-color 0.3s;
+  }
+  
+  .submit-review-form input:focus,
+  .submit-review-form textarea:focus {
+    border-color: #3498db;
+    outline: none;
+  }
+  
+  .submit-review-form .stars {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .star {
+    font-size: 1.8rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  
+  .star:hover {
+    transform: scale(1.2);
+  }
+  
+  .star.selected {
+    color: #f39c12;
+  }
+  
+  .btn-submit {
     background-color: #3498db;
     color: #fff;
-    padding: 12px 20px;
+    padding: 12px 25px;
     border: none;
-    border-radius: 5px;
+    border-radius: 6px;
     font-size: 1rem;
     cursor: pointer;
-}
-
-.submit-review-form button:hover {
+    transition: background-color 0.3s;
+  }
+  
+  .btn-submit:hover {
     background-color: #2980b9;
-}
-
-/* Star Rating System */
-.stars {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-}
-
-.star.selected {
-    color: #f39c12;
-}
-
-/* Media Queries for Responsiveness */
-@media (max-width: 1024px) {
+  }
+  
+  .error {
+    color: #e74c3c;
+    font-size: 0.9rem;
+    margin-top: 4px;
+  }
+  
+  /* Responsive Styling */
+  @media (max-width: 768px) {
     h2 {
-        font-size: 2rem;
+      font-size: 2rem;
     }
-}
-
-@media (max-width: 768px) {
-    #reviews {
-        padding: 40px 20px;
-    }
-
-    h2 {
-        font-size: 1.6rem;
-    }
-
-    .reviews-container {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    }
-
+  
     .review-form {
-        padding: 20px;
+      padding: 20px;
     }
-}
-
-@media (max-width: 500px) {
-    h2 {
-        font-size: 1.4rem;
-    }
-
+  
     .review-card {
-        padding: 15px;
+      padding: 16px;
     }
-
-    .reviewer-name {
-        font-size: 1rem;
+  }
+  
+  @media (max-width: 500px) {
+    h2 {
+      font-size: 1.6rem;
     }
-
+  
     .review-feedback {
-        font-size: 0.9rem;
+      font-size: 0.95rem;
     }
-}
+  
+    .star {
+      font-size: 1.5rem;
+    }
+  }
+  

@@ -65,7 +65,7 @@ const Signup = () => {
   };
 
   const signUpRouting = async () => {
-    alert(backendURL + "/api/send-otp");
+    alert(backendURL + "/api/signup");
     const form = new FormData();
     for (let key in formData) {
       form.append(key, formData[key]);
@@ -78,29 +78,25 @@ const Signup = () => {
         },
       });
 
-      if (result.status === 201) {
+      const resData = result.data;
+
+      if (resData.success) {
         setError("");
-        const user = result.data.user;
+        const { user, token } = resData;
+
+        localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(user));
         localStorage.setItem("username", user.name);
         localStorage.setItem("email", user.email);
+
         alert("Signup successful!");
         navigate('/');
-      } else if (result.status === 410) {
-        alert("OTP has expired. Please request a new one.");
-      } else if (result.status === 401) {
-        alert("Invalid OTP. Please try again.");
-      } else if (result.status === 404) {
-        alert("No verification found for this email. Please sign up first.");
-      } else if (result.status === 400) {
-        alert("Bad request. Please check the entered values.");
       } else {
-        alert("Signup failed. Try again.");
+        setError(resData.message || "Signup failed. Try again.");
       }
-    }
-    catch (error) {
+    } catch (error) {
       console.error(error);
-      alert(backendURL + "/api/send-otp");
+      alert(backendURL + "/api/signup");
       alert("An error occurred. Please try again later.");
     }
   };
@@ -158,7 +154,7 @@ const Signup = () => {
             onChange={handleChange}
           />
           {fieldErrors.email && <p className="error-message">{fieldErrors.email}</p>}
-          
+
           <div className="password-container">
             <InputField
               name="password"

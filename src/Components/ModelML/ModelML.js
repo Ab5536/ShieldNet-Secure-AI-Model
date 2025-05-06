@@ -1,15 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./ModelML.css";
 
 const ModelML = () => {
   const backendURL = process.env.REACT_APP_BACKEND_URI || "http://localhost:5000";
+  const navigate = useNavigate();
+
   const [selectedImage, setSelectedImage] = useState(null);
   const [result, setResult] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Retrieve user email from local storage
-  const userEmail = localStorage.getItem("email"); // Make sure you are storing the user's email as "userEmail"
+  // Retrieve email and token from localStorage
+  const userEmail = localStorage.getItem("email");
+  const token = localStorage.getItem("token");
+
+  // Redirect if token not found
+  useEffect(() => {
+    if (!token) {
+      alert("🔒 Please sign in to access this feature.");
+      navigate("/signin");
+    }
+  }, [navigate, token]);
 
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
@@ -19,11 +31,9 @@ const ModelML = () => {
     setResult("Analyzing image...");
     setLoading(true);
 
-    // Create a new FormData object
     const formData = new FormData();
     formData.append("image", file);
 
-    // Append user email from localStorage
     if (userEmail) {
       formData.append("email", userEmail);
     } else {
@@ -33,21 +43,26 @@ const ModelML = () => {
     }
 
     try {
-      // Send the form data to the backend using Axios
       const response = await axios.post(`${backendURL}/api/predict`, formData, {
         headers: {
-          "Content-Type": "multipart/form-data", // Ensure we send the data as multipart/form-data
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`, // Attach JWT token
         },
       });
 
-      // Check if response is successful
       if (response.status === 200) {
         setResult(response.data.prediction || "No disease detected.");
       } else {
-        throw new Error("Prediction failed");
+        throw new Error("Prediction failed.");
       }
     } catch (error) {
-      setResult(`❌ Error: ${error.message}`);
+      if (error.response?.status === 401) {
+        setResult("❌ Unauthorized. Please sign in again.");
+        localStorage.removeItem("token");
+        navigate("/signin");
+      } else {
+        setResult(`❌ Error: ${error.message}`);
+      }
     } finally {
       setLoading(false);
     }

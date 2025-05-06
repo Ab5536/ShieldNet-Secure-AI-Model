@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-// import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./Homepage.css";
 import Header from "../../Components/Header/Header";
 import ModelML from "../../Components/ModelML/ModelML";
@@ -11,20 +11,30 @@ import Footer from "../../Components/Footer/Footer";
 import NewVisitor from "../../Components/Newvisitor/Newvisitor";
 
 const Homepage = () => {
-  // const navigate = useNavigate();
-
   const [user, setUser] = useState(null);
 
-  // Check for logged in user on first render
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (error) {
-        console.error("Error parsing user:", error);
-        localStorage.removeItem("user"); // Remove invalid data
-      }
+    const token = localStorage.getItem("token"); // Assumes JWT is saved as 'token'
+    
+    if (token) {
+      // Use the backend URI from the environment variable
+      const backendURI = process.env.REACT_APP_BACKEND_URI;
+
+      // Send the token to the backend to verify its validity
+      axios
+        .get(`${backendURI}/api/verify-token`, { // Dynamic URL from .env
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          // If the token is valid, set the user data
+          setUser({ name: response.data.name, email: response.data.email });
+        })
+        .catch((error) => {
+          console.error("Token validation failed:", error);
+          localStorage.removeItem("token"); // Remove invalid token from localStorage
+        });
     }
   }, []);
 
