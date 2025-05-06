@@ -1,9 +1,10 @@
 from flask import Blueprint, request, jsonify, current_app
 from bson import ObjectId
+import jwt
 from app.services.otp_service import verify_otp
 from app.services.cloudinary_service import save_image_for_user
 from app.utils.auth_util import checkuserPassword, get_user_hashed
-from app.utils.jwt_utils import generate_token, jwt_required
+from app.utils.jwt_utils import decode_token, generate_token, jwt_required
 users = Blueprint('user_routes', __name__)
 
 # SIGNUP ROUTE
@@ -122,3 +123,26 @@ def upload_image():
     except Exception as e:
         return jsonify({"error": f"Internal server error: {str(e)}"}), 500
     
+@users.route('/api/verify-token', methods=['GET'])
+def verify_token():
+    token = request.headers.get('Authorization')  # Get the token from the Authorization header
+    if not token:
+        return jsonify({"message": "Token is missing"}), 400
+
+    token = token.split(" ")[1]  # Strip "Bearer " from the token
+
+    try:
+        # Use the utility function to decode and validate the token
+        decoded_token = decode_token(token)
+
+        # Return the user data (you can include more claims from the JWT here)
+        return jsonify({
+            "message": "Token is valid",
+            "name": decoded_token.get('name'),
+            "email": decoded_token.get('email'),
+        }), 200
+
+    except jwt.ExpiredSignatureError as e:
+        return jsonify({"message": str(e)}), 401
+    except jwt.InvalidTokenError as e:
+        return jsonify({"message": str(e)}), 401
