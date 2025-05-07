@@ -15,15 +15,28 @@ const Signin = () => {
   });
 
   const [error, setError] = useState("");
+  const [emailError, setEmailError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
+  const validateEmailFormat = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log(`Updated ${name}:`, value);
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
+
+    if (name === "email") {
+      if (!validateEmailFormat(value)) {
+        setEmailError("❌ Please enter a valid email address.");
+      } else {
+        setEmailError("");
+      }
+    }
   };
 
   const togglePasswordVisibility = () => {
@@ -31,16 +44,12 @@ const Signin = () => {
   };
 
   const SigninRouting = async () => {
-    console.log("Attempting sign-in with data:", formData);
-    console.log(backendURL)
     try {
       const response = await axios.post(
         `${backendURL}/api/signin`,
         formData,
         { headers: { "Content-Type": "application/json" } }
       );
-
-      console.log("Server response:", response.data);
 
       if (response.data.success) {
         const { user, token } = response.data;
@@ -56,11 +65,8 @@ const Signin = () => {
       } else {
         const msg = response.data.error || "Something went wrong. Please try again.";
         setError(msg);
-        console.warn("Signin failed:", msg);
       }
     } catch (error) {
-      console.error("Axios error:", error);
-
       if (error.response) {
         let msg;
         const status = error.response.status;
@@ -79,13 +85,19 @@ const Signin = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    console.log("Submitting form with data:", formData);
 
-    if (formData.email && formData.password) {
-      SigninRouting();
-    } else {
+    if (!formData.email || !formData.password) {
       setError("Please fill in all required fields.");
+      return;
     }
+
+    if (emailError) {
+      setError("Please correct the errors before submitting.");
+      return;
+    }
+
+    setError("");
+    SigninRouting();
   };
 
   return (
@@ -103,6 +115,7 @@ const Signin = () => {
             value={formData.email}
             onChange={handleChange}
           />
+          {emailError && <div className="error-alert">{emailError}</div>}
 
           <div className="password-wrapper">
             <input
