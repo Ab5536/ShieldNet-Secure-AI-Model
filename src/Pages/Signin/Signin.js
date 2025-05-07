@@ -19,6 +19,7 @@ const Signin = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    console.log(`Updated ${name}:`, value);
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -30,16 +31,17 @@ const Signin = () => {
   };
 
   const SigninRouting = async () => {
-    const form = new FormData();
-    for (let key in formData) {
-      form.append(key, formData[key]);
-    }
-
+    console.log("Attempting sign-in with data:", formData);
+    console.log(backendURL)
     try {
-      const response = await axios.post(`${backendURL}/api/signin`, form, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      
+      const response = await axios.post(
+        `${backendURL}/api/signin`,
+        formData,
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      console.log("Server response:", response.data);
+
       if (response.data.success) {
         const { user, token } = response.data;
 
@@ -48,14 +50,17 @@ const Signin = () => {
         localStorage.setItem("email", user.email);
         localStorage.setItem("token", token);
         setError("");
+
         alert("✅ Welcome back, " + user.name + "!");
         navigate("/");
       } else {
         const msg = response.data.error || "Something went wrong. Please try again.";
         setError(msg);
+        console.warn("Signin failed:", msg);
       }
     } catch (error) {
-      console.error(error);
+      console.error("Axios error:", error);
+
       if (error.response) {
         let msg;
         const status = error.response.status;
@@ -64,6 +69,7 @@ const Signin = () => {
         else if (status === 401) msg = "Incorrect password. Please try again.";
         else if (status === 500) msg = "Server error. Please try again later.";
         else msg = "Something went wrong. Please try again.";
+
         setError(msg);
       } else {
         setError("Unable to connect. Please try again later.");
@@ -73,6 +79,8 @@ const Signin = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
+    console.log("Submitting form with data:", formData);
+
     if (formData.email && formData.password) {
       SigninRouting();
     } else {
