@@ -18,8 +18,8 @@ def create_app():
     
     
     # Enable CORS for the app
-    CORS(app, resources={r"/*": {"origins":app.config["CORS_ORIGINS"]}})
-    
+    CORS(app, resources={r"/*": {"origins": app.config["FRONTEND_URL"]}}, supports_credentials=True)
+
     # Register blueprints
     app.register_blueprint(users)
     app.register_blueprint(otp_bp)
