@@ -76,22 +76,28 @@ def signup():
 def signin():
     try:
         mongo = current_app.mongo
-        email = request.form.get("email")
-        password = request.form.get("password")
+        data = request.get_json()
 
-        # Check if email and password are provided
-        if not all([email, password]):
+        # Safely extract email and password
+        email = data.get("email")
+        password = data.get("password")
+
+        if not email or not password:
             return jsonify({"success": False, "error": "Missing email or password."}), 400
 
-        # Find the user by email
+        # Find the user in the database
         user = mongo.db.users.find_one({"email": email})
         if not user:
             return jsonify({"success": False, "error": "User not found."}), 404
+
+        # Validate password
         is_valid = checkuserPassword(password, user["password"])
         if not is_valid:
             return jsonify({"success": False, "error": "Incorrect password."}), 401
+
+        # Generate JWT token
         token = generate_token(user["_id"])
-        # Successful sign in
+
         return jsonify({
             "success": True,
             "message": "User signed in successfully.",
@@ -104,9 +110,11 @@ def signin():
         }), 200
 
     except Exception as e:
-        # Catch any unexpected errors
-        return jsonify({"success": False, "error": f"Internal Server Error Yes I am Abdullah Zahid: {str(e)}"}), 500
-    
+        return jsonify({
+            "success": False,
+            "error": f"Internal Server Error: {str(e)}"
+        }), 500
+
 @users.route('/upload-image', methods=['POST'])
 def upload_image():
     mongo = current_app.mongo
