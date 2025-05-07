@@ -8,7 +8,7 @@ from app.utils.jwt_utils import decode_token, generate_token, jwt_required
 users = Blueprint('user_routes', __name__)
 
 # SIGNUP ROUTE
-@users.route("/api/signup", methods=["POST"])
+@users.route("/api/signup", methods=["POST", 'OPTIONS'])
 def signup():
     mongo = current_app.mongo
     # Extract form data
@@ -72,7 +72,7 @@ def signup():
         }), 500
 
 # SIGNIN ROUTE
-@users.route("/api/signin", methods=["POST"])
+@users.route("/api/signin", methods=["POST", 'OPTIONS'])
 def signin():
     try:
         mongo = current_app.mongo
@@ -115,7 +115,7 @@ def signin():
             "error": f"Internal Server Error: {str(e)}"
         }), 500
 
-@users.route('/upload-image', methods=['POST'])
+@users.route('/upload-image', methods=['POST', 'OPTIONS'])
 def upload_image():
     mongo = current_app.mongo
     email = request.form.get('email')
@@ -131,7 +131,7 @@ def upload_image():
     except Exception as e:
         return jsonify({"error": f"Internal server error: {str(e)}"}), 500
     
-@users.route('/api/verify-token', methods=['GET'])
+@users.route('/api/verify-token', methods=['GET', 'OPTIONS'])
 def verify_token():
     token = request.headers.get('Authorization')  # Get the token from the Authorization header
     if not token:

@@ -18,7 +18,12 @@ def create_app():
     
     
     # Enable CORS for the app
-    CORS(app, resources={r"/*": {"origins": app.config["FRONTEND_URL"]}}, supports_credentials=True)
+    CORS(app,
+     origins=["https://shield-net-secure-ai-model.vercel.app"],
+     supports_credentials=True,
+     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+     allow_headers=["Content-Type", "Authorization"]
+    )
 
     # Register blueprints
     app.register_blueprint(users)

@@ -1,18 +1,15 @@
-# app/services/otp_service.py
-
 import random
 from datetime import datetime, timedelta
 from flask_mail import Mail, Message
 from flask import current_app
 
 
-otp_storage = {}  # Store OTP data temporarily (you can replace this with a database)
-
 # Generate OTP and store it with expiration time
 def generate_otp():
     otp = random.randint(100000, 999999)
     expires_at = datetime.now() + timedelta(minutes=5)
     return otp, expires_at
+
 # Send OTP via email
 def send_otp_email(email, otp):
     try:
@@ -75,3 +72,9 @@ def verify_otp(email, otp):
         "reason": "invalid_otp",
         "message": "The OTP you entered is incorrect."
     }, 401
+
+def is_valid_gmail(email):
+    if '@gmail.com' not in email:
+        return False
+    # Simple check for Gmail email format
+    return True
