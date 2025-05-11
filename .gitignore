@@ -1,0 +1,87 @@
+# ===============================
+# Node.js Dependencies and Caches
+# ===============================
+node_modules/
+node_modules/.cache
+.node_modules
+
+# ===============================
+# Python Bytecode and Caches
+# ===============================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# ===============================
+# Compiled C Extensions
+# ===============================
+*.so
+
+# ===============================
+# Packaging and Distribution
+# ===============================
+build/
+dist/
+develop/
+.eggs/
+*.egg-info/
+*.manifest
+.installed.cfg
+
+# ===============================
+# PyInstaller Build Files
+# ===============================
+*.spec
+
+# ===============================
+# Machine Learning Models
+# ===============================
+*.pkl
+model_1_Binary
+model_1_Binary.pkl
+machine_learning/model_1_Binary.pkl
+
+# ===============================
+# Test and Coverage Reports
+# ===============================
+.cache
+.coverage
+.coverage.*
+*.cover
+nosetests.xml
+coverage.xml
+.hypothesis/
+
+# ===============================
+# Flask and Django Sessions
+# ===============================
+flask_session/
+*.session-backend
+
+# ===============================
+# Scrapy
+# ===============================
+scrapy.cfg
+logs/
+
+# ===============================
+# Jupyter Notebooks
+# ===============================
+.ipynb_checkpoints/
+
+# ===============================
+# IDE and Editor Config Files
+# ===============================
+.vscode/
+*.idea
+
+# ===============================
+# Local Environment Configs
+# ===============================
+*.env
+*.local.env
+local.cfg
+.venv/
+venv/
