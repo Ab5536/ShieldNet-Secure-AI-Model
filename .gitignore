@@ -1,68 +1,87 @@
-node_modules/.cache
+# ===============================
+# Node.js Dependencies and Caches
+# ===============================
 node_modules/
+node_modules/.cache
 .node_modules
 
-
-# Byte-compiled / optimized / DLL files
-*.pyc
+# ===============================
+# Python Bytecode and Caches
+# ===============================
+__pycache__/
+*.py[cod]
 *.pyo
 *.pyd
-__pycache__/
+*.pyc
 
-# C extensions
+# ===============================
+# Compiled C Extensions
+# ===============================
 *.so
 
-# Distribution / packaging
-.eggs/
-dist/
+# ===============================
+# Packaging and Distribution
+# ===============================
 build/
+dist/
 develop/
+.eggs/
 *.egg-info/
-.installed.cfg
 *.manifest
-machine_learning/model_1_Binary.pkl
-model_1_Binary.pkl/
-model_1_Binary
-*.pkl
-# PyInstaller
-*.spec
-build/
-dist/
+.installed.cfg
 
-# Unit test/coverage reports
-*.py[cod]
+# ===============================
+# PyInstaller Build Files
+# ===============================
+*.spec
+
+# ===============================
+# Machine Learning Models
+# ===============================
+*.pkl
+model_1_Binary
+model_1_Binary.pkl
+machine_learning/model_1_Binary.pkl
+
+# ===============================
+# Test and Coverage Reports
+# ===============================
+.cache
 .coverage
 .coverage.*
-.cache
+*.cover
 nosetests.xml
 coverage.xml
-*.cover
 .hypothesis/
 
-# Django session files
+# ===============================
+# Flask and Django Sessions
+# ===============================
+flask_session/
 *.session-backend
 
-# Flask sessions (if using)
-flask_session/
-
-# Tornado (if using)
-*.tlog
-
-# Scrapy logs
+# ===============================
+# Scrapy
+# ===============================
 scrapy.cfg
 logs/
 
-# IPython notebook
-.ipynb_checkpoints
-.ipynb_checkpoints
+# ===============================
+# Jupyter Notebooks
+# ===============================
+.ipynb_checkpoints/
 
-# PyCharm
-*.idea
+# ===============================
+# IDE and Editor Config Files
+# ===============================
 .vscode/
+*.idea
 
-# Local configuration
+# ===============================
+# Local Environment Configs
+# ===============================
 *.env
 *.local.env
 local.cfg
-.venv
+.venv/
 venv/
