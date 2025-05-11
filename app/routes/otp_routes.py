@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app.services.otp_service import generate_otp, is_valid_gmail, send_otp_email, verify_otp, check_email_exists
+from app.services.otp_service import generate_otp, is_valid_gmail, send_otp_email, verify_otp
 from flask import current_app
 
 otp_bp = Blueprint('otp_routes', __name__)
