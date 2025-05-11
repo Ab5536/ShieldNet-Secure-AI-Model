@@ -20,8 +20,6 @@ develop/
 *.egg-info/
 .installed.cfg
 *.manifest
-
-#Machine Learning Routes
 machine_learning/model_1_Binary.pkl
 model_1_Binary.pkl/
 model_1_Binary
